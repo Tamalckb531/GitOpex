@@ -1,0 +1,9 @@
+{
+    "manifest_version": 3,
+    "name": "GitOpex",
+    "version": "1.0",
+    "description": "AI Powered Github Assistant",
+    "action": {
+        "default_popup": "popup.html"
+    }
+}
