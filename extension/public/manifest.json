@@ -1,0 +1,19 @@
+{
+    "manifest_version": 3,
+    "version": "1.0.0",
+    "name": "GitOpex",
+    "description": "AI Powered Github Assistant",
+    "action": {
+        "default_popup": "index.html"
+    },
+    "permission": [
+        "scripting"
+    ],
+    "host_permissions": [
+        "http://*/*",
+        "https://*/*"
+    ],
+    "icons": {
+        "32": "vite.svg"
+    }
+}
