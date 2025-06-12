@@ -1,8 +1,16 @@
+import AMA from "./components/AMA";
+import ChatBar from "./components/ChatBar";
+import ChatBox from "./components/ChatBox";
+import Header from "./components/Header";
+
 function App() {
   return (
-    <>
-      <h1 className=" text-3xl text-red-400">Hello world!</h1>
-    </>
+    <div className=" w-[400px] h-[600px]">
+      <Header />
+      <AMA />
+      <ChatBox />
+      <ChatBar />
+    </div>
   );
 }
 
