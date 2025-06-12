@@ -4,23 +4,20 @@ interface msg {
 }
 const ChatBox = () => {
   return (
-    <div className=" flex flex-col gap-4 mx-2 w-full">
+    <div className=" flex flex-col gap-4 mx-2 w-full ">
       <ChatMsg
         type="send"
         message="Hey! Can You please explain what kind of projects this profile has ?"
       />
       <ChatMsg
         type="receive"
-        message="Hi there! This profile has mostly Typescript based projects. Two of them (rankdevs, GitOpex) are actively receiving open source contributions"
+        message="Hi there! This profile has mostly Typescript based projects. Two of them (rankdevs, GitOpex) are actively receiving open source contributions."
       />
       <ChatMsg
         type="send"
-        message="Okay! Can you tell me where should I start contributing ?"
+        message="Okay! Can you tell me where should I start contributing ? I use typescript and pro-efficient at web dev"
       />
-      {/* <ChatMsg
-        type="receive"
-        message="If you know how to build AI agent and chrome extension than GitOpex is best. If you know how to build chrome extension and have experience with stats heavy app code than Rankdevs is perfect."
-      /> */}
+      <ChatMsg type="receive" message="Rankdevs will be perfect for you." />
     </div>
   );
 };
