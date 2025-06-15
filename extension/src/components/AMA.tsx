@@ -1,6 +1,85 @@
+"use client";
 import { useEffect, useState } from "react";
 
+interface TabInfo {
+  url: string;
+  title: string;
+}
+
 const AMA = () => {
+  const [currentTab, setCurrentTab] = useState<TabInfo | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    getCurrentTab();
+  }, []);
+
+  const getCurrentTab = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+
+      const [tab] = await chrome.tabs.query({
+        active: true,
+        currentWindow: true,
+      });
+
+      if (tab && tab.url) {
+        setCurrentTab({
+          url: tab.url,
+          title: tab.title || "Unknown Title",
+        });
+      } else {
+        setError("Unable to get current tab information");
+      }
+    } catch (err) {
+      console.error("Error getting current tab:", err);
+      setError("Failed to retrieve tab information");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className=" flex flex-col justify-center items-center gap-1 p-2 mt-2 text-[var(--dark-color)]">
+        <p className=" text-sm font-bold">Getting the tab Info...</p>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className=" flex flex-col justify-center items-center gap-1 p-2 mt-2 text-[var(--dark-color)]">
+        <p className=" text-sm font-bold">Some Error Occurred: </p>
+        <p>{error}</p>
+        <button
+          onClick={getCurrentTab}
+          className=" bg-red-900 text-[var(--bg-color)] p-2 rounded-md"
+        >
+          Retry
+        </button>
+      </div>
+    );
+  }
+
+  return (
+    <div className=" flex flex-col justify-center items-center gap-1 p-2 mt-2 text-[var(--dark-color)]">
+      {currentTab && (
+        <p className=" text-sm font-bold">
+          We are now at Github {currentTab.title}:{currentTab.url}
+        </p>
+      )}
+      <p>Ask Me Anything</p>
+    </div>
+  );
+};
+
+export default AMA;
+
+/*
+
   const [githubType, setGithubType] = useState<string>("");
   const [githubName, setGithubName] = useState<string>("");
 
@@ -35,14 +114,4 @@ const AMA = () => {
     }
   }, []);
 
-  return (
-    <div className=" flex flex-col justify-center items-center gap-1 p-2 mt-2 text-[var(--dark-color)]">
-      <p className=" text-sm font-bold">
-        We are now at Github {githubType} : {githubName}
-      </p>
-      <p>Ask Me Anything</p>
-    </div>
-  );
-};
-
-export default AMA;
+*/
