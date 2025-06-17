@@ -22,7 +22,7 @@ const sendPageInfo = () => {
     });
 };
 
-//? Send page info immediately -> check
+//? Send page info immediately
 sendPageInfo();
 
 //? Listen for URL changes
@@ -42,6 +42,7 @@ observer.observe(document.body, {
 });
 
 //? Listen for popstate events (back/forward navigation)
+//? If DOM don't change but URL change then it gonna trigger.
 window.addEventListener("popstate", () => {
   setTimeout(sendPageInfo, 100); // small delay to ensure URL is updated
 });
