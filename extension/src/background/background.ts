@@ -1,7 +1,5 @@
 console.log("Background script loaded");
 
-const chrome = window.chrome;
-
 let currentPageInfo: any = null;
 
 //? Listen for messages from content scripts
