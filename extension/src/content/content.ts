@@ -22,7 +22,7 @@ const sendPageInfo = () => {
     });
 };
 
-//? Send page info immediately
+//? Send page info immediately -> check
 sendPageInfo();
 
 //? Listen for URL changes
