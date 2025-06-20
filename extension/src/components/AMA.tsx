@@ -1,19 +1,68 @@
 "use client";
 import { useEffect, useState } from "react";
 
-interface TabInfo {
-  url: string;
-  title: string;
-}
-
 const AMA = () => {
-  const [currentTab, setCurrentTab] = useState<TabInfo | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
+  const [xPage, setXPage] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
+  const [githubType, setGithubType] = useState<string>("");
+  const [githubName, setGithubName] = useState<string>("");
 
   useEffect(() => {
     getCurrentTab();
   }, []);
+
+  const getTitleUrl = (tab: string): void => {
+    const url = new URL(tab);
+    const pathSegments = url.pathname
+      .split("/")
+      .filter((segment) => segment !== "");
+
+    const reservedPages = [
+      "dashboard",
+      "notifications",
+      "settings",
+      "pulls",
+      "issues",
+      "marketplace",
+      "explore",
+      "apps",
+      "topics",
+      "collections",
+      "events",
+      "sponsors",
+      "codespaces",
+      "copilot",
+      "discussion",
+      "projects",
+    ];
+
+    if (url.host !== "github.com") {
+      setXPage(true);
+      return;
+    }
+
+    if (
+      pathSegments.length >= 1 &&
+      pathSegments[0].toLowerCase() == "github.com"
+    ) {
+      pathSegments.shift();
+    }
+
+    if (reservedPages.includes(pathSegments[0].toLowerCase())) {
+      setGithubType("Page");
+      setGithubName(pathSegments[0]);
+    } else if (pathSegments.length == 1) {
+      setGithubType("Profile");
+      setGithubName(pathSegments[0]);
+    } else if (pathSegments.length == 2) {
+      setGithubType("Repository");
+      setGithubName(pathSegments[1]);
+    } else {
+      setGithubType("Page");
+      setGithubName(pathSegments[0]);
+    }
+  };
 
   const getCurrentTab = async () => {
     try {
@@ -26,10 +75,7 @@ const AMA = () => {
       });
 
       if (tab && tab.url) {
-        setCurrentTab({
-          url: tab.url,
-          title: tab.title || "Unknown Title",
-        });
+        getTitleUrl(tab.url);
       } else {
         setError("Unable to get current tab information");
       }
@@ -45,6 +91,14 @@ const AMA = () => {
     return (
       <div className=" flex flex-col justify-center items-center gap-1 p-2 mt-2 text-[var(--dark-color)]">
         <p className=" text-sm font-bold">Getting the tab Info...</p>
+      </div>
+    );
+  }
+
+  if (xPage) {
+    return (
+      <div className=" flex flex-col justify-center items-center gap-1 p-2 mt-2 text-[var(--dark-color)]">
+        <p className=" text-sm font-bold">Sorry! It only works on github</p>
       </div>
     );
   }
@@ -66,9 +120,9 @@ const AMA = () => {
 
   return (
     <div className=" flex flex-col justify-center items-center gap-1 p-2 mt-2 text-[var(--dark-color)]">
-      {currentTab && (
+      {githubName && githubType && (
         <p className=" text-sm font-bold">
-          We are now at Github {currentTab.title}:{currentTab.url}
+          We are now at Github {githubType} : {githubName}
         </p>
       )}
       <p>Ask Me Anything</p>
