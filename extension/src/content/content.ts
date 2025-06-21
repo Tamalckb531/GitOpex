@@ -1,75 +1,59 @@
-console.log("Content script loaded on: ", window.location.href);
+interface ProfileDataPayload {
+  username: string;
+  name: string;
+  bio: string;
+  location: string;
+  website: string;
+  repoCount: string;
+  pinnedRepos: string[];
+}
 
-//? Function to get current page info
-const getCurrentPageInfo = () => {
+//? Get basic scrapped data
+const getProfileData = (): ProfileDataPayload => {
+  const username: string =
+    document
+      .querySelector("span.p-nickname")
+      ?.textContent?.trim()
+      .split("\n")[0] || "";
+
+  const name: string =
+    document.querySelector("span.p-name")?.textContent?.trim() || "";
+
+  const bio: string =
+    document.querySelector("div.p-note")?.textContent?.trim() || "";
+
+  const location: string =
+    document
+      .querySelector('li[itemprop="homeLocation"] span')
+      ?.textContent?.trim() || "";
+
+  const website: string =
+    document.querySelector('li[itemprop="url"] a')?.getAttribute("href") || "";
+
+  const repoCount: string =
+    document
+      .querySelector('a[href$="?tab=repositories"] span.Counter')
+      ?.textContent?.trim() || "";
+
+  const pinnedRepos: string[] = [...document.querySelectorAll("span.repo")]
+    .map((el) => el.textContent?.trim())
+    .filter(Boolean) as string[];
+
   return {
-    url: window.location.href,
-    title: document.title,
-    timestamp: Date.now(),
+    username,
+    name,
+    bio,
+    location,
+    website,
+    repoCount,
+    pinnedRepos,
   };
 };
 
-//? Send current page info to background script when page loads
-const sendPageInfo = () => {
-  const pageInfo = getCurrentPageInfo();
-  window.chrome.runtime
-    .sendMessage({
-      type: "PAGE_INFO",
-      data: pageInfo,
-    })
-    .catch((error) => {
-      console.error("Error sending page info: ", error);
-    });
-};
+const data = getProfileData();
 
-//? Send page info immediately
-sendPageInfo();
-
-//? Listen for URL changes
-let currentUrl = window.location.href;
-const observer = new MutationObserver(() => {
-  if (currentUrl != window.location.href) {
-    currentUrl = window.location.href;
-    console.log("URL changed to : ", currentUrl);
-    sendPageInfo();
-  }
+//? Sending profile data to background.ts
+chrome.runtime.sendMessage({
+  type: "GITHUB_PROFILE_DATA",
+  payload: data,
 });
-
-//? Start observing
-observer.observe(document.body, {
-  childList: true,
-  subtree: true,
-});
-
-//? Listen for popstate events (back/forward navigation)
-//? If DOM don't change but URL change then it gonna trigger.
-window.addEventListener("popstate", () => {
-  setTimeout(sendPageInfo, 100); // small delay to ensure URL is updated
-});
-
-//? Listen for pushState/replaceState (programmatic navigation)
-
-const originalPushState = history.pushState;
-const originalReplaceState = history.replaceState;
-
-history.pushState = (...args) => {
-  originalPushState.apply(history, args);
-  setTimeout(sendPageInfo, 100);
-};
-
-history.replaceState = (...args) => {
-  originalReplaceState.apply(history, args);
-  setTimeout(sendPageInfo, 100);
-};
-
-//? Listen for messages from popup or background
-
-window.chrome.runtime.onMessage.addListener(
-  (message, _sender, sendResponse) => {
-    if (message.type === "GET_PAGE_INFO") {
-      const pageInfo = getCurrentPageInfo();
-      sendResponse(pageInfo);
-    }
-    return true; //? Keep message channel open for async response
-  }
-);
