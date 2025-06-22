@@ -49,6 +49,12 @@ const slimRepo = (repo: any): RepoInfo => {
 };
 
 chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
+  const url = sender.tab?.url || "";
+  if (!url.includes("github.com")) {
+    console.log("Message not from GitHub. Ignored.");
+    return;
+  }
+
   if (message.type === "GITHUB_PROFILE_DATA") {
     const userData: ProfileDataPayload = message.payload;
     const username: string = userData.username;

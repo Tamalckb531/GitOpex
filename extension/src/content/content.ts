@@ -8,6 +8,12 @@ interface ProfileDataPayload {
   pinnedRepos: string[];
 }
 
+//? Guard for content.ts
+if (!window.location.hostname.includes("github.com")) {
+  console.log("Not a GitHub page. Exiting  content script.");
+  throw new Error("Not GitHub");
+}
+
 //? Get basic scrapped data
 const getProfileData = (): ProfileDataPayload => {
   const username: string =
