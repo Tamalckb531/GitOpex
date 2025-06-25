@@ -1,31 +1,4 @@
-interface RepoInfo {
-  id: number;
-  name: string;
-  full_name: string;
-  description: string | null;
-  size: number;
-  stargazers_count: number;
-  watchers_count: number;
-  language: string | null;
-  open_issues_count: number;
-  license: { name: string } | null;
-  forks: number;
-  open_issues: number;
-  topics: string[];
-  updated_at: string;
-  has_issues: boolean;
-  html_url: string;
-}
-
-interface ProfileDataPayload {
-  username: string;
-  name: string;
-  bio: string;
-  location: string;
-  website: string;
-  repoCount: string;
-  pinnedRepos: string[];
-}
+import type { ProfileDataPayload, RepoInfo } from "../types/data.type";
 
 const slimRepo = (repo: any): RepoInfo => {
   return {

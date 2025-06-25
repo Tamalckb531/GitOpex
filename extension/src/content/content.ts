@@ -1,12 +1,4 @@
-interface ProfileDataPayload {
-  username: string;
-  name: string;
-  bio: string;
-  location: string;
-  website: string;
-  repoCount: string;
-  pinnedRepos: string[];
-}
+import type { ProfileDataPayload } from "../types/data.type";
 
 //? Guard for content.ts
 if (!window.location.hostname.includes("github.com")) {
