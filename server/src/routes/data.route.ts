@@ -3,4 +3,6 @@ import { insertData } from "../controller/data.controller";
 
 const dataRoute = new Hono();
 
-dataRoute.post("/data/rag", insertData);
+dataRoute.post("/rag", insertData);
+
+export default dataRoute;

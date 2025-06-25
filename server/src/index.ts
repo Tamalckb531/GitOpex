@@ -1,14 +1,12 @@
 import { Hono } from "hono";
+import dataRoute from "./routes/data.route";
 
 const app = new Hono();
 
-app.get("/", (c) => {
-  return c.text("Hello Hono!");
+app.get("/health", (c) => {
+  return c.json({ message: "server is healthy" });
 });
 
-app.get("/api/greet/:name", (c) => {
-  const name = c.req.param("name");
-  return c.json({ message: `Hello, ${name}` });
-});
+app.route("/api/data", dataRoute);
 
 export default app;
