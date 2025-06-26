@@ -26,3 +26,5 @@ export interface ProfileDataPayload {
   repoCount: string;
   pinnedRepos: string[];
 }
+
+export type UrlType = "NONE" | "PROFILE" | "REPO" | "REPO_IN";
