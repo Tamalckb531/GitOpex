@@ -27,4 +27,12 @@ export interface ProfileDataPayload {
   pinnedRepos: string[];
 }
 
+export type Enriched = {
+  userData: ProfileDataPayload;
+  allRepos: RepoInfo[];
+  openSourceRepos: RepoInfo[];
+  activeRepos: RepoInfo[];
+  popularRepos: RepoInfo[];
+};
+
 export type UrlType = "NONE" | "PROFILE" | "REPO" | "REPO_IN";
