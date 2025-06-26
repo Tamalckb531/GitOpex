@@ -1,0 +1,1 @@
+sudo docker run --network host -it --rm -v $(pwd):/app -w /app node:20 bash -c "npm run dev"
