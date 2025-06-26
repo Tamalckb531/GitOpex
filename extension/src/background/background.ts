@@ -53,15 +53,29 @@ chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
       )
       .slice(0, 5);
 
-    sendResponse({
-      enriched: {
-        userData,
-        allRepos,
-        openSourceRepos,
-        activeRepos,
-        popularRepos,
-      },
-    });
+    const enriched = {
+      userData,
+      allRepos,
+      openSourceRepos,
+      activeRepos,
+      popularRepos,
+    };
+
+    //? Send to backend server
+    try {
+      await fetch("http://localhost:8787/api/data/rag", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(enriched),
+      });
+      console.log("API called");
+    } catch (err) {
+      console.error("Failed to send data to backend");
+    }
+
+    sendResponse({ enriched });
 
     return true;
   }
