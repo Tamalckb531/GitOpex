@@ -70,7 +70,7 @@ chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
         },
         body: JSON.stringify(enriched),
       });
-      console.log("API called");
+      console.log(enriched);
     } catch (err) {
       console.error("Failed to send data to backend");
     }
