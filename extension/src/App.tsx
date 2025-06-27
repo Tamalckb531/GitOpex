@@ -5,9 +5,15 @@ import ChatBox from "./components/ChatBox";
 import Header from "./components/Header";
 
 function App() {
+  console.log("App rendered");
+
   useEffect(() => {
+    console.log("Popup mounted");
+
     chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
       const url = tabs[0].url || "";
+      console.log("Got URL:", url);
+
       chrome.runtime.sendMessage({
         type: "INIT_SCRAPE",
         url,
