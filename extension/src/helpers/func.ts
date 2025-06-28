@@ -38,3 +38,7 @@ export const getGitHubPageType = (url: string): UrlType => {
     return "NONE";
   }
 };
+
+export const isGithubUrl = (url: string): boolean => {
+  return url.includes("github.com");
+};

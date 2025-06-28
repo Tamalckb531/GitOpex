@@ -1,5 +1,4 @@
-import { getGitHubPageType } from "../helpers/func";
-import { scrapeGitHubProfile } from "./background.core";
+import { getGitHubPageType, scrapeGitHubProfile } from "./background.core";
 
 console.log("Background loaded");
 
