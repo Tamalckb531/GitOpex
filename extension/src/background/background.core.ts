@@ -45,24 +45,20 @@ export const scrapeGitHubProfile = async (
   const allRepos: RepoInfo[] = repos.map(slimRepo);
 
   //? Extract enriched information
-  const openSourceRepos = allRepos.filter((repo: any) => repo.license);
   const activeRepos = allRepos.filter((repo: any) => repo.open_issues_count);
-  const popularRepos = [...allRepos]
-    .sort(
-      (a: any, b: any) =>
-        b.stargazers_count +
-        b.forks_count +
-        b.open_issues_count -
-        (a.stargazers_count + a.forks_count + a.open_issues_count)
-    )
+  const popularOSRepos = [...allRepos]
+    .filter((repo: any) => repo.license)
+    .sort((a, b) => {
+      const aScore = a.stargazers_count + a.forks + a.open_issues_count;
+      const bScore = b.stargazers_count + b.forks + b.open_issues_count;
+      return bScore - aScore;
+    })
     .slice(0, 5);
-
   const enriched: Enriched = {
     userData,
     allRepos,
-    openSourceRepos,
+    popularOSRepos,
     activeRepos,
-    popularRepos,
   };
 
   //? Send to backend server

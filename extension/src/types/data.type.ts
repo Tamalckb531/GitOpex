@@ -30,9 +30,8 @@ export interface ProfileDataPayload {
 export type Enriched = {
   userData: ProfileDataPayload;
   allRepos: RepoInfo[];
-  openSourceRepos: RepoInfo[];
   activeRepos: RepoInfo[];
-  popularRepos: RepoInfo[];
+  popularOSRepos: RepoInfo[];
 };
 
 export type UrlType = "NONE" | "PROFILE" | "REPO" | "REPO_IN";
