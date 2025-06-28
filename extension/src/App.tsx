@@ -6,16 +6,10 @@ import Header from "./components/Header";
 import { isGithubUrl } from "./helpers/func";
 
 function App() {
-  console.log("App rendered");
-
   useEffect(() => {
-    console.log("Popup mounted");
-
     chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
       const url = tabs[0].url || "";
       if (!isGithubUrl(url)) return;
-
-      console.log("Scraping gonna run afterward");
 
       chrome.runtime.sendMessage({
         type: "INIT_SCRAPE",
