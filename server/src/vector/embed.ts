@@ -1,5 +1,6 @@
 import { GoogleGenerativeAIEmbeddings } from "@langchain/google-genai";
 import dotenv from "dotenv";
+import { Document } from "langchain/document";
 import { MemoryVectorStore } from "langchain/vectorstores/memory";
 dotenv.config();
 
