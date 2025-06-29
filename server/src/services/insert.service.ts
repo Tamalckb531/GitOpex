@@ -1,0 +1,23 @@
+import { Enriched } from "../types/data.type";
+import { storeEmbeddings } from "../vector/embed";
+
+const stringifyEnriched = (enriched: Enriched): string[] => {
+  const { userData, allRepos } = enriched;
+
+  const profileText = `Name: ${userData.name}, Username: ${userData.username}, Bio: ${userData.bio}, Location: ${userData.location}, Website: ${userData.website}`;
+
+  const repoTexts = allRepos.map((repo) => {
+    return `Repo: ${repo.name}, Description: ${repo.description}, Language: ${
+      repo.language
+    }, Stars: ${repo.stargazers_count}, Topics: ${repo.topics?.join(", ")}`;
+  });
+
+  return [profileText, ...repoTexts];
+};
+
+export const handleEnrichedData = async (enriched: Enriched) => {
+  const docs = stringifyEnriched(enriched);
+  const vectorStore = await storeEmbeddings(docs);
+
+  return vectorStore;
+};
