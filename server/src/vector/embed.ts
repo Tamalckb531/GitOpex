@@ -1,11 +1,10 @@
 import { GoogleGenerativeAIEmbeddings } from "@langchain/google-genai";
-import dotenv from "dotenv";
 import { Document } from "langchain/document";
 import { MemoryVectorStore } from "langchain/vectorstores/memory";
-dotenv.config();
+import { AI_API_KEY } from "../config/config";
 
 const embeddings = new GoogleGenerativeAIEmbeddings({
-  apiKey: process.env.AI_API_KEY,
+  apiKey: AI_API_KEY,
   model: "models/embedding-001",
 });
 
