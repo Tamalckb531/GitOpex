@@ -1,14 +1,24 @@
 import { RunnableConfig } from "@langchain/core/runnables";
 import { GraphState } from "./state";
+import { TavilySearchAPIRetriever } from "@langchain/community/retrievers/tavily_search_api";
+import { TV_API_KEY } from "../config/config";
 
 export const webSearch = async (
   state: typeof GraphState.State,
-  _config?: RunnableConfig
+  config?: RunnableConfig
 ): Promise<Partial<typeof GraphState.State>> => {
-  console.log("🌐 Fallback to web search...");
+  console.log("Fallback to web search...");
 
-  // TODO: Do web search if no vector hits
+  const retriever = new TavilySearchAPIRetriever({
+    apiKey: TV_API_KEY,
+    k: 1,
+  });
+
+  const webDocuments = await retriever
+    .withConfig({ runName: "FetchRelevantDocumentsWeb" })
+    .invoke(state.question, config);
+
   return {
-    documents: [], // dummy
+    documents: webDocuments,
   };
 };
