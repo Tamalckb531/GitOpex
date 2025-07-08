@@ -8,12 +8,13 @@ const embeddings = new GoogleGenerativeAIEmbeddings({
   model: "models/embedding-001",
 });
 
+export const vectorStore = new MemoryVectorStore(embeddings);
+
 export const storeEmbeddings = async (docs: string[]) => {
   const documents = docs.map(
     (text: any) => new Document({ pageContent: text })
   );
 
-  const vectorStore = new MemoryVectorStore(embeddings);
   await vectorStore.addDocuments(documents);
 
   console.log("Embeddings stored in memory");
