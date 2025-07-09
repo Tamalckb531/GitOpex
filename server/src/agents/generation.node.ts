@@ -16,11 +16,19 @@ export const generate = async (
   const model = new ChatGoogleGenerativeAI({
     apiKey: AI_API_KEY,
     model: "gemini-1.5-flash",
-    temperature: 0,
+    temperature: 0.3,
+    maxOutputTokens: 150,
   });
 
   //? Generate a well written prompt for RAG work
-  const prompt = await pull<ChatPromptTemplate>("rlm/rag-prompt");
+  // const prompt = await pull<ChatPromptTemplate>("rlm/rag-prompt");
+  const prompt = ChatPromptTemplate.fromMessages([
+    [
+      "system",
+      "You're a helpful GitHub assistant. Reply in short, clear sentences. Be concise and give direct answers only. Assume the user is viewing a GitHub profile or repository.",
+    ],
+    ["human", "{question}"],
+  ]);
   //? Feed the prompt to the model and create pipeline to parse the string output from complex ai output
   const ragChain = prompt.pipe(model).pipe(new StringOutputParser());
 
