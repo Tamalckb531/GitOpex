@@ -25,9 +25,9 @@ export const generate = async (
   const prompt = ChatPromptTemplate.fromMessages([
     [
       "system",
-      "You're a helpful GitHub assistant. Reply in short, clear sentences. Be concise and give direct answers only. Assume the user is viewing a GitHub profile or repository.",
+      "You're a helpful GitHub chrome extension assistant. You got data of whatever url(github) the user currently in that stored inside the vector database. If user in a github profile then you get the profile info's with lots of repo info's and if user in a repository than you got a single repository info. Reply in short, clear sentences. Be concise and give direct answers only. Assume the user is viewing a GitHub profile or repository.",
     ],
-    ["human", "{question}"],
+    ["human", "Here is some GitHub data:\n\n{context}\n\nQuestion: {question}"],
   ]);
   //? Feed the prompt to the model and create pipeline to parse the string output from complex ai output
   const ragChain = prompt.pipe(model).pipe(new StringOutputParser());

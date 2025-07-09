@@ -1,6 +1,6 @@
 import { Context } from "hono";
 import { handleEnrichedData, handleInvoking } from "../services/insert.service";
-import { Enriched } from "../types/data.type";
+import { Enriched, Query } from "../types/data.type";
 
 export const insertData = async (c: Context) => {
   const enriched: Enriched = await c.req.json();
@@ -11,9 +11,9 @@ export const insertData = async (c: Context) => {
 };
 
 export const invokeAgent = async (c: Context) => {
-  const query: string = await c.req.json();
+  const query: Query = await c.req.json();
 
-  const result = await handleInvoking(query);
+  const result = await handleInvoking(query.question);
 
   return c.json({ status: "ok", result });
 };

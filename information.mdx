@@ -1,0 +1,80 @@
+# Introduction :
+`Hey! Let me set the context first.
+So I was building an AI agent name GitOpex. That's a chrome extension with chat interface that connects with my ai rag agent backend.
+What it does is, when an user entire in any github profile or repo, it extract all the info's of it and send them to the backend and RAG use those as document. 
+So in the chat interface, user can ask any question that we can answer
+First read all of these I wrote, then I will give you other info`
+
+# Motives : 
+
+1. First convert the documents in to embeddings which will be the building block for a Rag application (Here is where I wanna use a vector database. We gonna talk about it later )
+2. Create the graph with LangGraph 
+3. Create the retrieval node 
+4. Create web search Node which agent gonna use when they don't find what they need from retrieve
+5. Create the generation node which will create the main output
+6. Create the graph workflow which will be the main agentic workflow
+7. Compile and run the graph
+
+# Folder Structure :
+
+server/
+├── src/
+│   ├── agents/               # LangGraph agents, nodes, workflows
+│   │   ├── index.ts
+│   │   ├── retrieval.node.ts
+│   │   ├── websearch.node.ts
+│   │   └── generation.node.ts
+│   │   └── state.ts
+│   │
+│   ├── vector/               # Embedding & vector DB (chroma/pinecone)
+│   │   ├── embed.ts
+│   │   ├── index.ts
+│   │   └── client.ts
+│   │
+│   ├── controller/
+│   │   └── data.controller.ts
+│   │
+│   ├── route/
+│   │   └── data.route.ts
+│   │
+│   ├── services/             # Logic between controller and AI agents
+│   │   └── insert.service.ts
+│   │
+│   ├── types/                # All shared types and interfaces
+│   │   └── enriched.type.ts
+│   │
+│   ├── utils/                # Helpers (parsers, formatters, logs)
+│   │   └── logger.ts
+│   │
+│   └── index.ts              # Entry point
+│
+├── .env
+├── tsconfig.json
+└── package.json
+
+# Embedding process 
+
+data comes in /api/data/rag and enters in insertData of controller/data.controller.ts-> then it gets the data from req.json() and send it to handleEnrichedData of /services/insert.service -> it first stringify all the data and creates an array of string and send them in storeEmbeddings in /vector/embed -> storeEmbeddings creates th embeddings model with GoogleGenerativeAIEmbeddings , model :  "models/embedding-001" , creates Documents out of the each string in array , create vectorStore in memory and add docs, return vectorStore 
+
+Data type :
+ type Enriched = `{
+    userData: ProfileDataPayload;
+    allRepos: RepoInfo[];
+    activeRepos: RepoInfo[];
+    popularOSRepos: RepoInfo[];
+}`
+
+# Total Process 
+
+-----Data scraping----- : 
+/api/data/rag -> insertData(controller/data.controller.ts) -> handleEnrichedData(services/insert.service.ts) -> stringify + vectorStore in storeEmbeddings(vector/embed.ts) 
+
+-----Query----- : 
+/api/data/query -> invokeAgent(controller/data.controller.ts) -> handleInvoking(services/insert.service.ts) -> invoke app(agents/index.ts) -> compile version of workflow -> call retrieval node -> conditionally call webSearch node -> call generate node and end 
+
+retrieval node (agents/retrieval.node.ts) : call the vectorStore -> invoke it with state.question -> return relatedDocuments
+webSearch node (agents/webSearch.node.ts) : call the Tavily search -> invoke it with state.question -> return webDocuments
+generate node (agents/generation.node.ts) : create llm instance -> create pipeline (prompt~llm~output parsers) -> invoke pipeline with question and docs from retrieval or webSearch Node -> return generation (which have the answer)
+
+
+handleInvoking gets the generation returned by the generate node, store it in output variable and return output.generation which is a string of the desired answer

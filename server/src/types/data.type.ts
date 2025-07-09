@@ -34,4 +34,8 @@ export type Enriched = {
   popularOSRepos: RepoInfo[];
 };
 
+export type Query = {
+  question: string;
+};
+
 export type UrlType = "NONE" | "PROFILE" | "REPO" | "REPO_IN";

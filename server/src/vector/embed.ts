@@ -17,6 +17,4 @@ export const storeEmbeddings = async (docs: string[]) => {
   );
 
   await vectorStore.addDocuments(documents);
-
-  console.log("Embeddings stored in memory");
 };
