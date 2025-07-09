@@ -1,3 +1,4 @@
+import { app } from "../agents";
 import { Enriched } from "../types/data.type";
 import { storeEmbeddings } from "../vector/embed";
 
@@ -38,4 +39,9 @@ export const handleEnrichedData = async (enriched: Enriched) => {
   const vectorStore = await storeEmbeddings(docs);
 
   return vectorStore;
+};
+
+export const handleInvoking = async (query: string): Promise<string> => {
+  const output = await app.invoke({ question: query });
+  return output.generation;
 };

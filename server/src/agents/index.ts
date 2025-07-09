@@ -19,5 +19,6 @@ export const workflow = new StateGraph(GraphState)
     }
   )
   .addEdge("webSearch", "generate")
-  .addEdge("generate", END)
-  .compile();
+  .addEdge("generate", END);
+
+export const app = workflow.compile();
