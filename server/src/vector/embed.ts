@@ -8,6 +8,7 @@ const embeddings = new GoogleGenerativeAIEmbeddings({
   model: "models/embedding-001",
 });
 
+//? One in memory variable that stores all data for users
 export const vectorStore = new MemoryVectorStore(embeddings);
 
 export const storeEmbeddings = async (docs: string[]) => {
@@ -18,5 +19,4 @@ export const storeEmbeddings = async (docs: string[]) => {
   await vectorStore.addDocuments(documents);
 
   console.log("Embeddings stored in memory");
-  return vectorStore;
 };

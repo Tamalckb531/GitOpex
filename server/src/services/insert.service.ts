@@ -36,9 +36,7 @@ const stringifyEnriched = (enriched: Enriched): string[] => {
 
 export const handleEnrichedData = async (enriched: Enriched) => {
   const docs = stringifyEnriched(enriched);
-  const vectorStore = await storeEmbeddings(docs);
-
-  return vectorStore;
+  await storeEmbeddings(docs);
 };
 
 export const handleInvoking = async (query: string): Promise<string> => {
