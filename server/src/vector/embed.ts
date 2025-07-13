@@ -18,5 +18,3 @@ export const storeEmbeddings = async (docs: string[]) => {
 
   await vectorStore.addDocuments(documents);
 };
-
-//? Hello
