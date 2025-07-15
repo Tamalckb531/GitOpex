@@ -1,10 +1,6 @@
 import { Hono } from "hono";
 import dataRoute from "./routes/data.route";
 import { cors } from "hono/cors";
-import { PrismaClient } from "@prisma/client/edge";
-import type { PrismaClient as PrismaType } from "@prisma/client";
-import { withAccelerate } from "@prisma/extension-accelerate";
-import { getPrisma } from "./libs/prismaFunc";
 
 // ?Create the main Hono app
 const app = new Hono<{
