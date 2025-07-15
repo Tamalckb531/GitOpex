@@ -31,19 +31,7 @@ app.get("/health", (c) => {
   return c.json({ message: "server is healthy" });
 });
 
-app.get("/api/user", async (c) => {
-  const prisma = getPrisma(c.env.DATABASE_URL);
-
-  const user = await prisma.user.create({
-    data: {
-      name: "Jon Doe",
-      email: `jon${Math.floor(Math.random() * 1000)}@example.com`,
-    },
-  });
-
-  return c.json(user);
-});
-
 app.route("/api/data", dataRoute);
+app.route("/api/auth", dataRoute);
 
 export default app;
