@@ -1,11 +1,11 @@
-import {} from "@prisma/client";
 import { Context } from "hono";
 import { SignUpBodyTypes, SignUpSchema } from "../types/schema/zod.index";
-
+import { deleteCookie, setCookie } from "hono/cookie";
 import { HTTPException } from "hono/http-exception";
 import bcrypt from "bcryptjs";
-import crypto from "crypto";
 import { PrismaClient, User } from "../generated/prisma";
+import { encryptApiKey } from "../libs/encryptions";
+import jwt from "jsonwebtoken";
 
 const prisma = new PrismaClient();
 
@@ -25,13 +25,42 @@ export const signup = async (c: Context) => {
 
     const hashedPassword: string = bcrypt.hashSync(password, 10);
 
+    const encryptedApiKey: string = encryptApiKey(apiKey, c.env.ENCRYPTION_KEY);
+
     const newUser: User = await prisma.user.create({
       data: {
         email,
         name,
-        apiKey,
+        apiKey: encryptedApiKey,
         password: hashedPassword,
       },
+    });
+
+    if (!c.env.JWT_SECRET_KEY) {
+      throw new Error(
+        "JWT_SECRET_KEY is not defined in the environment variables"
+      );
+    }
+
+    const token: string = jwt.sign(
+      {
+        id: newUser.id,
+      },
+      c.env.JWT_SECRET_KEY
+    );
+
+    const { password: pass, apiKey: key, ...user } = newUser;
+
+    setCookie(c, "access_token", token, {
+      httpOnly: true,
+      secure: true,
+      sameSite: "Lax",
+      path: "/",
+    });
+
+    return c.json({
+      msg: "Logged in successfully",
+      user: user,
     });
   } catch (e: any) {
     throw new HTTPException(500, {
@@ -40,3 +69,5 @@ export const signup = async (c: Context) => {
   }
 };
 export const login = async (c: Context) => {};
+
+//? sadfj
