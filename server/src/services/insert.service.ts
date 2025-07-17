@@ -1,7 +1,8 @@
 import { app } from "../agents";
 import { Enriched } from "../types/data.type";
 import { storeEmbeddings } from "../vector/embed";
-import { PrismaClient, User } from "../generated/prisma";
+import { PrismaClient } from "../generated/prisma";
+import { decryptApiKey } from "../libs/encryptions";
 
 const prisma = new PrismaClient();
 
@@ -40,7 +41,8 @@ const stringifyEnriched = (enriched: Enriched): string[] => {
 export const handleEnrichedData = async (
   enriched: Enriched,
   userId: string | null,
-  key: string
+  key: string,
+  encryptKey: string
 ) => {
   const docs = stringifyEnriched(enriched);
   let apiKey: string = key;
@@ -51,7 +53,9 @@ export const handleEnrichedData = async (
         apiKey: true,
       },
     });
-    if (user?.apiKey) apiKey = user.apiKey;
+    if (user?.apiKey) {
+      apiKey = decryptApiKey(user.apiKey, encryptKey);
+    }
   }
   await storeEmbeddings(docs, apiKey);
 };

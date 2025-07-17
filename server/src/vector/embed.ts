@@ -1,7 +1,6 @@
 import { GoogleGenerativeAIEmbeddings } from "@langchain/google-genai";
 import { Document } from "langchain/document";
 import { MemoryVectorStore } from "langchain/vectorstores/memory";
-import { AI_API_KEY } from "../config/config";
 
 export let vectorStore: any;
 

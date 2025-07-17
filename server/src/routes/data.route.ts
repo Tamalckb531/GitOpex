@@ -5,6 +5,6 @@ import { authMiddleware } from "../middleware/tokenDetector";
 const dataRoute = new Hono();
 
 dataRoute.post("/rag", authMiddleware, insertData);
-dataRoute.post("/query", invokeAgent);
+dataRoute.post("/query", authMiddleware, invokeAgent);
 
 export default dataRoute;
