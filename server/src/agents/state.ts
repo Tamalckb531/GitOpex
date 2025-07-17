@@ -11,4 +11,7 @@ export const GraphState = Annotation.Root({
   generation: Annotation<string>({
     reducer: (x, y) => y ?? x,
   }),
+  apiKey: Annotation<string>({
+    reducer: (x, y) => y ?? x,
+  }),
 });

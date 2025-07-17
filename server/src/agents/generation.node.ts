@@ -1,8 +1,6 @@
 import { RunnableConfig } from "@langchain/core/runnables";
 import { GraphState } from "./state";
 import { ChatGoogleGenerativeAI } from "@langchain/google-genai";
-import { AI_API_KEY } from "../config/config";
-import { pull } from "langchain/hub";
 import { ChatPromptTemplate } from "@langchain/core/prompts";
 import { StringOutputParser } from "@langchain/core/output_parsers";
 import { formatDocumentsAsString } from "langchain/util/document";
@@ -14,7 +12,7 @@ export const generate = async (
   console.log("Generating final output...");
 
   const model = new ChatGoogleGenerativeAI({
-    apiKey: AI_API_KEY,
+    apiKey: state.apiKey,
     model: "gemini-1.5-flash",
     temperature: 0.3,
     maxOutputTokens: 150,

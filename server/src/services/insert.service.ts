@@ -3,6 +3,7 @@ import { Enriched } from "../types/data.type";
 import { storeEmbeddings } from "../vector/embed";
 import { PrismaClient } from "../generated/prisma";
 import { decryptApiKey } from "../libs/encryptions";
+import { HTTPException } from "hono/http-exception";
 
 const prisma = new PrismaClient();
 
@@ -46,21 +47,51 @@ export const handleEnrichedData = async (
 ) => {
   const docs = stringifyEnriched(enriched);
   let apiKey: string = key;
-  if (userId) {
-    const user = await prisma.user.findUnique({
-      where: { id: userId },
-      select: {
-        apiKey: true,
-      },
-    });
-    if (user?.apiKey) {
-      apiKey = decryptApiKey(user.apiKey, encryptKey);
+  try {
+    if (userId) {
+      const user = await prisma.user.findUnique({
+        where: { id: userId },
+        select: {
+          apiKey: true,
+        },
+      });
+      if (user?.apiKey) {
+        apiKey = decryptApiKey(user.apiKey, encryptKey);
+      }
     }
+  } catch (e: any) {
+    throw new HTTPException(500, {
+      message: e.message || "Error occurred while getting the apiKey of user",
+    });
   }
   await storeEmbeddings(docs, apiKey);
 };
 
-export const handleInvoking = async (query: string): Promise<string> => {
-  const output = await app.invoke({ question: query });
+export const handleInvoking = async (
+  query: string,
+  userId: string | null,
+  key: string,
+  encryptKey: string
+): Promise<string> => {
+  let apiKey: string = key;
+
+  try {
+    if (userId) {
+      const user = await prisma.user.findUnique({
+        where: { id: userId },
+        select: {
+          apiKey: true,
+        },
+      });
+      if (user?.apiKey) {
+        apiKey = decryptApiKey(user.apiKey, encryptKey);
+      }
+    }
+  } catch (e: any) {
+    throw new HTTPException(500, {
+      message: e.message || "Error occurred while getting the apiKey of user",
+    });
+  }
+  const output = await app.invoke({ question: query, apiKey });
   return output.generation;
 };

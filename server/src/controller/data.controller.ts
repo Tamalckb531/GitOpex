@@ -15,8 +15,16 @@ export const insertData = async (c: Context) => {
 
 export const invokeAgent = async (c: Context) => {
   const query: Query = await c.req.json();
+  const userId: string | null = c.get("userId");
+  const apiKey: string = c.env.AI_API_KEY;
+  const encryptKey: string = c.env.ENCRYPTION_KEY;
 
-  const result = await handleInvoking(query.question);
+  const result = await handleInvoking(
+    query.question,
+    userId,
+    apiKey,
+    encryptKey
+  );
 
   return c.json({ status: "ok", result });
 };
