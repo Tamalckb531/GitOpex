@@ -1,9 +1,10 @@
 import { Hono } from "hono";
 import { insertData, invokeAgent } from "../controller/data.controller";
+import { authMiddleware } from "../middleware/tokenDetector";
 
 const dataRoute = new Hono();
 
-dataRoute.post("/rag", insertData);
+dataRoute.post("/rag", authMiddleware, insertData);
 dataRoute.post("/query", invokeAgent);
 
 export default dataRoute;
