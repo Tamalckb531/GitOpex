@@ -1,6 +1,9 @@
 import { app } from "../agents";
 import { Enriched } from "../types/data.type";
 import { storeEmbeddings } from "../vector/embed";
+import { PrismaClient, User } from "../generated/prisma";
+
+const prisma = new PrismaClient();
 
 const stringifyEnriched = (enriched: Enriched): string[] => {
   const { userData, allRepos, activeRepos, popularOSRepos } = enriched;
@@ -34,9 +37,23 @@ const stringifyEnriched = (enriched: Enriched): string[] => {
   return [profileText, ...repoTexts, ...activeRepoTexts, ...popularOsTexts];
 };
 
-export const handleEnrichedData = async (enriched: Enriched) => {
+export const handleEnrichedData = async (
+  enriched: Enriched,
+  userId: string | null,
+  key: string
+) => {
   const docs = stringifyEnriched(enriched);
-  await storeEmbeddings(docs);
+  let apiKey: string = key;
+  if (userId) {
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+      select: {
+        apiKey: true,
+      },
+    });
+    if (user?.apiKey) apiKey = user.apiKey;
+  }
+  await storeEmbeddings(docs, apiKey);
 };
 
 export const handleInvoking = async (query: string): Promise<string> => {
