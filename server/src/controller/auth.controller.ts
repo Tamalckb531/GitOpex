@@ -1,6 +1,10 @@
 import { Context } from "hono";
-import { SignUpBodyTypes, SignUpSchema } from "../types/schema/zod.index";
-import { deleteCookie, setCookie } from "hono/cookie";
+import {
+  LoginBodyTypes,
+  LoginSchema,
+  SignUpBodyTypes,
+  SignUpSchema,
+} from "../types/schema/zod.index";
 import { HTTPException } from "hono/http-exception";
 import bcrypt from "bcryptjs";
 import { PrismaClient, User } from "../generated/prisma";
@@ -51,16 +55,10 @@ export const signup = async (c: Context) => {
 
     const { password: pass, apiKey: key, ...user } = newUser;
 
-    setCookie(c, "access_token", token, {
-      httpOnly: true,
-      secure: true,
-      sameSite: "Lax",
-      path: "/",
-    });
-
     return c.json({
       msg: "Logged in successfully",
       user: user,
+      token,
     });
   } catch (e: any) {
     throw new HTTPException(500, {
@@ -68,4 +66,48 @@ export const signup = async (c: Context) => {
     });
   }
 };
-export const login = async (c: Context) => {};
+export const login = async (c: Context) => {
+  const { email, password } = await c.req.json<LoginBodyTypes>();
+
+  try {
+    LoginSchema.parse({ email, password });
+
+    const validUser: User | null = await prisma.user.findUnique({
+      where: { email },
+    });
+
+    if (!validUser) return c.json({ msg: "Email not registered" });
+
+    const validPassword: boolean = bcrypt.compareSync(
+      password,
+      validUser.password
+    );
+
+    if (!validPassword) return c.json({ msg: "Invalid Password" });
+
+    if (!c.env.JWT_SECRET_KEY) {
+      throw new Error(
+        "JWT_SECRET_KEY is not defined in the environment variables"
+      );
+    }
+
+    const token: string = jwt.sign(
+      {
+        id: validUser.id,
+      },
+      c.env.JWT_SECRET_KEY
+    );
+
+    const { password: pass, apiKey: key, ...user } = validUser;
+
+    return c.json({
+      msg: "Logged in successfully",
+      user: user,
+      token,
+    });
+  } catch (e: any) {
+    throw new HTTPException(500, {
+      message: e.message || "An error occurred while logging in",
+    });
+  }
+};
