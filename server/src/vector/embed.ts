@@ -1,10 +1,14 @@
 import { GoogleGenerativeAIEmbeddings } from "@langchain/google-genai";
 import { Document } from "langchain/document";
 import { MemoryVectorStore } from "langchain/vectorstores/memory";
+import { Pinecone } from "@pinecone-database/pinecone";
 
 export let vectorStore: any;
 
 export const storeEmbeddings = async (docs: string[], apiKey: string) => {
+  const pc = new Pinecone({
+    apiKey: apiKey,
+  });
   const embeddings = new GoogleGenerativeAIEmbeddings({
     apiKey: apiKey,
     model: "models/embedding-001",
