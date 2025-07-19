@@ -5,6 +5,7 @@ import { Pinecone } from "@pinecone-database/pinecone";
 
 export let vectorStore: any;
 
+//TODO: have to implement pinecone here
 export const storeEmbeddings = async (docs: string[], apiKey: string) => {
   const pc = new Pinecone({
     apiKey: apiKey,
