@@ -24,3 +24,4 @@ export const storeEmbeddings = async (docs: string[], apiKey: string) => {
 
   await vectorStore.addDocuments(documents);
 };
+//?asfdad
