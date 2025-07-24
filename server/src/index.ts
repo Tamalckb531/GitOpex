@@ -1,5 +1,6 @@
 import { Hono } from "hono";
 import dataRoute from "./routes/data.route";
+import authRoute from "./routes/auth.route";
 import { cors } from "hono/cors";
 
 // ?Create the main Hono app
@@ -28,6 +29,6 @@ app.get("/health", (c) => {
 });
 
 app.route("/api/data", dataRoute);
-app.route("/api/auth", dataRoute);
+app.route("/api/auth", authRoute);
 
 export default app;
