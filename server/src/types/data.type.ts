@@ -28,6 +28,7 @@ export interface ProfileDataPayload {
 }
 
 export type Enriched = {
+  info: string;
   userData: ProfileDataPayload;
   allRepos: RepoInfo[];
   activeRepos: RepoInfo[];

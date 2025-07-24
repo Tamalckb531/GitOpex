@@ -43,7 +43,8 @@ export const handleEnrichedData = async (
   enriched: Enriched,
   userId: string | null,
   key: string,
-  encryptKey: string
+  encryptKey: string,
+  pineconeKey: string
 ) => {
   const docs = stringifyEnriched(enriched);
   let apiKey: string = key;
@@ -64,7 +65,7 @@ export const handleEnrichedData = async (
       message: e.message || "Error occurred while getting the apiKey of user",
     });
   }
-  await storeEmbeddings(docs, apiKey);
+  await storeEmbeddings(docs, apiKey, enriched.info, pineconeKey);
 };
 
 export const handleInvoking = async (
