@@ -7,8 +7,9 @@ export const insertData = async (c: Context) => {
   const userId: string | null = c.get("userId");
   const apiKey: string = c.env.AI_API_KEY;
   const encryptKey: string = c.env.ENCRYPTION_KEY;
+  const pineconeKey: string = c.env.PINECONE_API_KEY;
 
-  await handleEnrichedData(enriched, userId, apiKey, encryptKey);
+  await handleEnrichedData(enriched, userId, apiKey, encryptKey, pineconeKey);
 
   return c.json({ status: "ok" });
 };

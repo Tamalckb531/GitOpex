@@ -1,5 +1,6 @@
 import { GoogleGenerativeAIEmbeddings } from "@langchain/google-genai";
 import { Pinecone } from "@pinecone-database/pinecone";
+import { Constants, VectorData } from "../types/data.type";
 
 //TODO: have to implement pinecone here
 export const storeEmbeddings = async (
@@ -18,7 +19,7 @@ export const storeEmbeddings = async (
 
   //? Format each vector with metadata nd unique ID
   const now = new Date().toISOString();
-  const upsertData = vectors.map((values, i) => ({
+  const upsertData: VectorData[] = vectors.map((values, i) => ({
     id: `doc-${i}-${Date.now()}`,
     values,
     metadata: {
@@ -30,7 +31,7 @@ export const storeEmbeddings = async (
 
   //? Init Pinecone
   const pinecone = new Pinecone({ apiKey: pineconeKey });
-  const indexName = "gitopex-index";
+  const indexName = Constants.GITOPEX_INDEX;
   const index = pinecone.Index(indexName);
 
   //? Create index if it doesn't exist
@@ -49,6 +50,13 @@ export const storeEmbeddings = async (
         },
       },
     });
+
+    let isReady = false;
+    while (!isReady) {
+      const updatedList = await pinecone.listIndexes();
+      isReady = updatedList.indexes?.some((i) => i.name === indexName) || false;
+      if (!isReady) await new Promise((res) => setTimeout(res, 3000));
+    }
   }
 
   //? Upsert vector data into pinecone database

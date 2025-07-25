@@ -35,8 +35,24 @@ export type Enriched = {
   popularOSRepos: RepoInfo[];
 };
 
+export type VectorMetadata = {
+  info: string;
+  date: string;
+  text: string;
+};
+
+export type VectorData = {
+  id: string;
+  values: number[];
+  metadata: VectorMetadata;
+};
+
 export type Query = {
   question: string;
 };
 
 export type UrlType = "NONE" | "PROFILE" | "REPO" | "REPO_IN";
+
+export enum Constants {
+  GITOPEX_INDEX = "gitopex-index",
+}
