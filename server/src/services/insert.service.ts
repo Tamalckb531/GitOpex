@@ -64,6 +64,18 @@ const storable = async (
   return storeDate < oneWeekAgo;
 };
 
+const deleteEmbeddings = async (info: string, pineconeKey: string) => {
+  const pinecone = new Pinecone({ apiKey: pineconeKey });
+  const indexName = Constants.GITOPEX_INDEX;
+  const index = pinecone.Index(indexName);
+
+  await index.deleteMany({
+    filter: {
+      info: { $eq: info },
+    },
+  });
+};
+
 const prisma = new PrismaClient();
 
 const stringifyEnriched = (enriched: Enriched): string[] => {
@@ -107,6 +119,7 @@ export const handleEnrichedData = async (
 ) => {
   const isStorable: boolean = await storable(enriched.info, pineconeKey);
   if (!isStorable) return;
+  await deleteEmbeddings(enriched.info, pineconeKey);
   const docs = stringifyEnriched(enriched);
   let apiKey: string = key;
   try {
