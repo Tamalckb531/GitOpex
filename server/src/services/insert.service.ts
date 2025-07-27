@@ -170,3 +170,5 @@ export const handleInvoking = async (
   const output = await app.invoke({ question: query, apiKey });
   return output.generation;
 };
+
+//? inspect
