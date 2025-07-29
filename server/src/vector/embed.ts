@@ -1,6 +1,6 @@
 import { GoogleGenerativeAIEmbeddings } from "@langchain/google-genai";
-import { Pinecone } from "@pinecone-database/pinecone";
 import { Constants, VectorData } from "../types/data.type";
+import { createPineconeClient } from "./client";
 
 //TODO: have to implement pinecone here
 export const storeEmbeddings = async (
@@ -30,9 +30,8 @@ export const storeEmbeddings = async (
   }));
 
   //? Init Pinecone
-  const pinecone = new Pinecone({ apiKey: pineconeKey });
   const indexName = Constants.GITOPEX_INDEX;
-  const index = pinecone.Index(indexName);
+  const { pinecone, index } = createPineconeClient(pineconeKey, indexName);
 
   //? Create index if it doesn't exist
   const indexList = await pinecone.listIndexes();
@@ -51,6 +50,7 @@ export const storeEmbeddings = async (
       },
     });
 
+    //? Waiting for the readiness
     let isReady = false;
     while (!isReady) {
       const updatedList = await pinecone.listIndexes();
