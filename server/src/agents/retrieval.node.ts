@@ -2,6 +2,9 @@ import { RunnableConfig } from "@langchain/core/runnables";
 import { GraphState } from "./state";
 import { ScoreThresholdRetriever } from "langchain/retrievers/score_threshold";
 import { vectorStore } from "../vector/embed";
+import { env } from "process";
+
+const xyz = env.TZ;
 
 export const retrieve = async (
   state: typeof GraphState.State,
