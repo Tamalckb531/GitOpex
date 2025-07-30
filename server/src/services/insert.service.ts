@@ -148,6 +148,7 @@ export const handleInvoking = async (
   userId: string | null,
   key: string,
   pineconeKey: string,
+  tvKey: string,
   encryptKey: string
 ): Promise<string> => {
   let apiKey: string = key;
@@ -173,6 +174,7 @@ export const handleInvoking = async (
     question: query,
     apiKey,
     pineconeKey,
+    tvKey,
     info,
   });
   return output.generation;

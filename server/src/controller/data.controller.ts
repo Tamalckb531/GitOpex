@@ -19,6 +19,7 @@ export const invokeAgent = async (c: Context) => {
   const userId: string | null = c.get("userId");
   const apiKey: string = c.env.AI_API_KEY;
   const pineconeKey: string = c.env.PINECONE_API_KEY;
+  const tvKey: string = c.env.TV_API_KEY;
   const encryptKey: string = c.env.ENCRYPTION_KEY;
 
   const result = await handleInvoking(
@@ -27,6 +28,7 @@ export const invokeAgent = async (c: Context) => {
     userId,
     apiKey,
     pineconeKey,
+    tvKey,
     encryptKey
   );
 

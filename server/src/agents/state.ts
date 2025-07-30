@@ -17,6 +17,9 @@ export const GraphState = Annotation.Root({
   pineconeKey: Annotation<string>({
     reducer: (x, y) => y ?? x,
   }),
+  tvKey: Annotation<string>({
+    reducer: (x, y) => y ?? x,
+  }),
   info: Annotation<string>({
     reducer: (x, y) => y ?? x,
   }),
