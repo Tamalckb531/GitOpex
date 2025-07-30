@@ -144,8 +144,10 @@ export const handleEnrichedData = async (
 
 export const handleInvoking = async (
   query: string,
+  info: string,
   userId: string | null,
   key: string,
+  pineconeKey: string,
   encryptKey: string
 ): Promise<string> => {
   let apiKey: string = key;
@@ -167,7 +169,12 @@ export const handleInvoking = async (
       message: e.message || "Error occurred while getting the apiKey of user",
     });
   }
-  const output = await app.invoke({ question: query, apiKey });
+  const output = await app.invoke({
+    question: query,
+    apiKey,
+    pineconeKey,
+    info,
+  });
   return output.generation;
 };
 

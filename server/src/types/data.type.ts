@@ -48,6 +48,7 @@ export type VectorData = {
 };
 
 export type Query = {
+  info: string;
   question: string;
 };
 
