@@ -7,13 +7,14 @@ import {
 } from "../types/schema/zod.index";
 import { HTTPException } from "hono/http-exception";
 import bcrypt from "bcryptjs";
-import { PrismaClient, User } from "../generated/prisma";
 import { encryptApiKey } from "../libs/encryptions";
 import jwt from "jsonwebtoken";
-
-const prisma = new PrismaClient();
+import { User } from "../generated/prisma";
+import { getPrisma } from "../libs/prismaFunc";
 
 export const signup = async (c: Context) => {
+  const prisma = getPrisma(c.env.DATABASE_URL);
+
   const { email, password, name, apiKey } = await c.req.json<SignUpBodyTypes>();
   try {
     SignUpSchema.parse({ name, email, apiKey, password });
@@ -56,7 +57,7 @@ export const signup = async (c: Context) => {
     const { password: pass, apiKey: key, ...user } = newUser;
 
     return c.json({
-      msg: "Logged in successfully",
+      msg: "Signed up successfully",
       user: user,
       token,
     });
@@ -67,12 +68,14 @@ export const signup = async (c: Context) => {
   }
 };
 export const login = async (c: Context) => {
+  const prisma = getPrisma(c.env.DATABASE_URL);
+
   const { email, password } = await c.req.json<LoginBodyTypes>();
 
   try {
     LoginSchema.parse({ email, password });
 
-    const validUser: User | null = await prisma.user.findUnique({
+    const validUser: User | null = await prisma.user.findFirst({
       where: { email },
     });
 
