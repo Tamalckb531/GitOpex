@@ -8,8 +8,16 @@ export const insertData = async (c: Context) => {
   const apiKey: string = c.env.AI_API_KEY;
   const encryptKey: string = c.env.ENCRYPTION_KEY;
   const pineconeKey: string = c.env.PINECONE_API_KEY;
+  const db_url: string = c.env.DATABASE_URL;
 
-  await handleEnrichedData(enriched, userId, apiKey, encryptKey, pineconeKey);
+  await handleEnrichedData(
+    enriched,
+    userId,
+    apiKey,
+    encryptKey,
+    pineconeKey,
+    db_url
+  );
 
   return c.json({ status: "ok" });
 };
@@ -21,6 +29,7 @@ export const invokeAgent = async (c: Context) => {
   const pineconeKey: string = c.env.PINECONE_API_KEY;
   const tvKey: string = c.env.TV_API_KEY;
   const encryptKey: string = c.env.ENCRYPTION_KEY;
+  const db_url: string = c.env.DATABASE_URL;
 
   const result = await handleInvoking(
     query.question,
@@ -29,7 +38,8 @@ export const invokeAgent = async (c: Context) => {
     apiKey,
     pineconeKey,
     tvKey,
-    encryptKey
+    encryptKey,
+    db_url
   );
 
   return c.json({ status: "ok", result });
