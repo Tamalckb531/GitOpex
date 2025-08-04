@@ -3,7 +3,6 @@ import { Constants, VectorData } from "../types/data.type";
 import { createPineconeClient } from "./client";
 import { HTTPException } from "hono/http-exception";
 
-//TODO: have to implement pinecone here
 export const storeEmbeddings = async (
   docs: string[],
   apiKey: string,
@@ -25,7 +24,7 @@ export const storeEmbeddings = async (
       id: `doc-${i}-${Date.now()}`,
       values,
       metadata: {
-        info,
+        info: info,
         date: now,
         text: docs[i],
       },
