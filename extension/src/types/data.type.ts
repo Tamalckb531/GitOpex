@@ -35,3 +35,9 @@ export type Enriched = {
 };
 
 export type UrlType = "NONE" | "PROFILE" | "REPO" | "REPO_IN";
+export type TabType = "main" | "login" | "signup" | "settings";
+
+export interface TabContextType {
+  tab: TabType;
+  setTab: (tab: TabType) => void;
+}
