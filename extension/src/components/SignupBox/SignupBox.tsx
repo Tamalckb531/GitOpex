@@ -1,10 +1,11 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import {
   SignUpSchema,
   type SignUpBodyTypes,
 } from "../../types/schema/data.schema";
 import { ZodError } from "zod";
 import { Eye, EyeClosed, Info } from "lucide-react";
+import { TabContext } from "../../context/TabContext";
 
 const initialFormState: SignUpBodyTypes = {
   email: "",
@@ -20,6 +21,11 @@ const SignupBox: React.FC = () => {
   const [errors, setErrors] = useState<FormErrors>({});
   const [hide, setHide] = useState<boolean>(true);
   const [info, setInfo] = useState<boolean>(false);
+
+  const context = useContext(TabContext);
+  if (!context) return null;
+
+  const { setTab } = context;
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -42,6 +48,8 @@ const SignupBox: React.FC = () => {
       console.log("Form submitted successfully: ", formData);
 
       //TODO: Now we need to call our api here
+
+      setTab("main");
     } catch (error: any) {
       if (error instanceof ZodError) {
         const fieldErrors: FormErrors = {};
@@ -137,8 +145,17 @@ const SignupBox: React.FC = () => {
         {errors.apiKey && <p className="p-1 text-red-400">{errors.apiKey}</p>}
         {info && (
           <p className="p-1 text-blue-400">
-            Your Key <b>Should Be</b> Gemini Api Key. It will be protected with
-            our end to end encryption algorithm{" "}
+            Your Key Should Be a{" "}
+            <a
+              href="https://aistudio.google.com/app/apikey"
+              title="Get Your Gemini Api Key"
+              className=" cursor-pointer font-bold"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Gemini Api Key
+            </a>
+            . It will be protected with our end to end encryption algorithm{" "}
           </p>
         )}
       </div>
@@ -151,6 +168,15 @@ const SignupBox: React.FC = () => {
           Submit
         </button>
       </div>
+      <p className=" w-[80%] mt-5 text-center text-[14px]">
+        Already have an account ?{" "}
+        <span
+          className=" font-bold text-blue-400 cursor-pointer"
+          onClick={() => setTab("login")}
+        >
+          Login
+        </span>
+      </p>
     </form>
   );
 };
