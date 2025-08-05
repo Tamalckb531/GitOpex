@@ -10,7 +10,7 @@ interface TabProviderProps {
 
 export const TabProvider: FC<TabProviderProps> = ({
   children,
-  defaultTab = "main",
+  defaultTab = "signup",
 }) => {
   const [tab, setTab] = useState<TabType>(defaultTab);
 
