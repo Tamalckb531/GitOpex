@@ -6,7 +6,11 @@ import {
 import { ZodError } from "zod";
 import { Eye, EyeClosed, Info } from "lucide-react";
 import { TabContext } from "../../context/TabContext";
-import type { ServerAuthData } from "../../types/data.type";
+import {
+  ApiEndPoint,
+  Storage,
+  type ServerAuthData,
+} from "../../types/data.type";
 
 const initialFormState: SignUpBodyTypes = {
   email: "",
@@ -48,8 +52,6 @@ const SignupBox: React.FC = () => {
       SignUpSchema.parse(formData);
       setErrors({});
       console.log("Form submitted successfully: ", formData);
-
-      //TODO: Now we need to call our api here
       console.log(
         "Importing api url from vite : ",
         import.meta.env.VITE_API_BASE_URL
@@ -58,7 +60,7 @@ const SignupBox: React.FC = () => {
       const apiBaseUrl: string =
         import.meta.env.VITE_API_BASE_URL || "http://localhost:8787";
 
-      const response = await fetch(`${apiBaseUrl}/api/auth/signup`, {
+      const response = await fetch(`${apiBaseUrl}/${ApiEndPoint.SIGNUP}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -73,8 +75,8 @@ const SignupBox: React.FC = () => {
 
       const data: ServerAuthData = await response.json();
 
-      localStorage.setItem("authToken", data.token);
-      localStorage.setItem("userInfo", JSON.stringify(data.user));
+      localStorage.setItem(Storage.AUTH, data.token);
+      localStorage.setItem(Storage.USERINFO, JSON.stringify(data.user));
 
       setTab("main");
     } catch (error: any) {
@@ -97,7 +99,7 @@ const SignupBox: React.FC = () => {
     } finally {
       setTimeout(() => {
         setErrMsg("");
-      }, 2000);
+      }, 3000);
     }
   };
 

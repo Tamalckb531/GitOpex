@@ -53,3 +53,13 @@ export type ServerAuthData = {
   user: User;
   token: string;
 };
+
+export const Storage = {
+  USERINFO: "userInfo",
+  AUTH: "authToken",
+} as const;
+
+export const ApiEndPoint = {
+  LOGIN: "api/auth/login",
+  SIGNUP: "api/auth/signup",
+} as const;

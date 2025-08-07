@@ -79,14 +79,20 @@ export const login = async (c: Context) => {
       where: { email },
     });
 
-    if (!validUser) return c.json({ msg: "Email not registered" });
+    if (!validUser)
+      throw new HTTPException(400, {
+        message: "Email not registered",
+      });
 
     const validPassword: boolean = bcrypt.compareSync(
       password,
       validUser.password
     );
 
-    if (!validPassword) return c.json({ msg: "Invalid Password" });
+    if (!validPassword)
+      throw new HTTPException(400, {
+        message: "Invalid Password",
+      });
 
     if (!c.env.JWT_SECRET_KEY) {
       throw new Error(
