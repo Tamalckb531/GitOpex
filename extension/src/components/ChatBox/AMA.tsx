@@ -17,6 +17,9 @@ const AMA = () => {
       .split("/")
       .filter((segment) => segment !== "");
 
+    console.log(url);
+    console.log(pathSegments);
+
     const reservedPages = [
       "dashboard",
       "notifications",
@@ -49,16 +52,25 @@ const AMA = () => {
     }
 
     if (reservedPages.includes(pathSegments[0].toLowerCase())) {
-      setGithubType("Page");
+      setGithubType("Github Page");
       setGithubName(pathSegments[0]);
     } else if (pathSegments.length == 1) {
-      setGithubType("Profile");
+      setGithubType("Github Profile");
       setGithubName(pathSegments[0]);
     } else if (pathSegments.length == 2) {
-      setGithubType("Repository");
+      setGithubType("Github Repository");
       setGithubName(pathSegments[1]);
+    } else if (pathSegments.length == 4) {
+      setGithubType("Github Repository");
+      setGithubName(pathSegments[1]);
+    } else if (pathSegments.length >= 5 && pathSegments[2] == "tree") {
+      setGithubType(`${pathSegments[1]} Folder`);
+      setGithubName(pathSegments[pathSegments.length - 1]);
+    } else if (pathSegments.length >= 5 && pathSegments[2] == "blob") {
+      setGithubType(`${pathSegments[1]} File`);
+      setGithubName(pathSegments[pathSegments.length - 1]);
     } else {
-      setGithubType("Page");
+      setGithubType("Github Page");
       setGithubName(pathSegments[0]);
     }
   };
@@ -120,8 +132,8 @@ const AMA = () => {
   return (
     <div className=" flex flex-col justify-center items-center gap-1 p-2 mt-2 text-[var(--dark-color)]">
       {githubName && githubType && (
-        <p className=" text-sm font-bold">
-          We are now at Github {githubType} : {githubName}
+        <p className=" text-sm font-bold text-center">
+          We are now at {githubType} : {githubName}
         </p>
       )}
       <p>Ask Me Anything</p>
