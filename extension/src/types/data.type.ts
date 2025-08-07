@@ -41,3 +41,15 @@ export interface TabContextType {
   tab: TabType;
   setTab: (tab: TabType) => void;
 }
+
+type User = {
+  email: string;
+  name: string;
+  id: string;
+};
+
+export type ServerAuthData = {
+  msg: string;
+  user: User;
+  token: string;
+};

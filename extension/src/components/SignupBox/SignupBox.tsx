@@ -6,6 +6,7 @@ import {
 import { ZodError } from "zod";
 import { Eye, EyeClosed, Info } from "lucide-react";
 import { TabContext } from "../../context/TabContext";
+import type { ServerAuthData } from "../../types/data.type";
 
 const initialFormState: SignUpBodyTypes = {
   email: "",
@@ -21,6 +22,7 @@ const SignupBox: React.FC = () => {
   const [errors, setErrors] = useState<FormErrors>({});
   const [hide, setHide] = useState<boolean>(true);
   const [info, setInfo] = useState<boolean>(false);
+  const [errMsg, setErrMsg] = useState<string>("");
 
   const context = useContext(TabContext);
   if (!context) return null;
@@ -39,7 +41,7 @@ const SignupBox: React.FC = () => {
     setErrors((prev) => ({ ...prev, [name]: undefined }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     try {
@@ -48,6 +50,31 @@ const SignupBox: React.FC = () => {
       console.log("Form submitted successfully: ", formData);
 
       //TODO: Now we need to call our api here
+      console.log(
+        "Importing api url from vite : ",
+        import.meta.env.VITE_API_BASE_URL
+      );
+
+      const apiBaseUrl: string =
+        import.meta.env.VITE_API_BASE_URL || "http://localhost:8787";
+
+      const response = await fetch(`${apiBaseUrl}/api/auth/signup`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Signup failed");
+      }
+
+      const data: ServerAuthData = await response.json();
+
+      localStorage.setItem("authToken", data.token);
+      localStorage.setItem("userInfo", JSON.stringify(data.user));
 
       setTab("main");
     } catch (error: any) {
@@ -60,9 +87,17 @@ const SignupBox: React.FC = () => {
           }
         });
         setErrors(fieldErrors);
+      } else if (error.message === "Failed to fetch") {
+        setErrMsg(
+          "Server not responding. Check out the connection or try again"
+        );
       } else {
-        console.error(error);
+        setErrMsg(error.message);
       }
+    } finally {
+      setTimeout(() => {
+        setErrMsg("");
+      }, 2000);
     }
   };
 
@@ -177,6 +212,7 @@ const SignupBox: React.FC = () => {
           Login
         </span>
       </p>
+      {errMsg.length > 0 && <p className="p-1 text-red-400">{errMsg}</p>}
     </form>
   );
 };

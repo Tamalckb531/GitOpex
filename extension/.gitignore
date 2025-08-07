@@ -24,3 +24,6 @@ dist-ssr
 *.sln
 *.sw?
 prompt.mdx
+
+#secrets
+.env
