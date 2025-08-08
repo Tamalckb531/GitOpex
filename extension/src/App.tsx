@@ -5,7 +5,7 @@ import { TabContext } from "./context/TabContext";
 import LoginWrapper from "./components/Wrapper/LoginWrapper";
 import SignupWrapper from "./components/Wrapper/SignupWrapper";
 import SettingsWrapper from "./components/Wrapper/SettingsWrapper";
-import { Storage } from "./types/data.type";
+import { ChromeTypes, Storage } from "./types/data.type";
 import { isGithubUrl } from "./helpers/func";
 
 function App() {
@@ -15,7 +15,7 @@ function App() {
       if (!isGithubUrl(url)) return;
 
       chrome.runtime.sendMessage({
-        type: "INIT_SCRAPE",
+        type: ChromeTypes.INIT,
         url,
         tabId: tabs[0].id,
       });

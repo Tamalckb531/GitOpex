@@ -68,3 +68,12 @@ export const ApiEndPoint = {
   LOGIN: "api/auth/login",
   SIGNUP: "api/auth/signup",
 } as const;
+
+export const ChromeTypes = {
+  INIT: "INIT_SCRAPE",
+  PROFILE: "START_SCRAPE_PROFILE",
+  REPO: "START_SCRAPE_REPO",
+  REPO_FOLDER: "START_SCRAPE_REPO_Folder",
+  REPO_FILE: "START_SCRAPE_REPO_File",
+  GT_PROF_DATA: "GITHUB_PROFILE_DATA",
+} as const;

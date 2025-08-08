@@ -1,3 +1,4 @@
+import { ChromeTypes } from "../types/data.type";
 import { getProfileData } from "./content.core";
 
 //? Guard for content.ts
@@ -6,11 +7,11 @@ if (!window.location.hostname.includes("github.com")) {
 }
 
 chrome.runtime.onMessage.addListener((message) => {
-  if (message.type === "START_SCRAPE_PROFILE") {
+  if (message.type === ChromeTypes.PROFILE) {
     const data = getProfileData();
     //? Sending profile data to background.ts
     chrome.runtime.sendMessage({
-      type: "GITHUB_PROFILE_DATA",
+      type: ChromeTypes.GT_PROF_DATA,
       payload: data,
     });
   }
