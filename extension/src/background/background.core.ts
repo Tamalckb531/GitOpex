@@ -109,7 +109,9 @@ export const getGitHubPageType = (url: string): UrlType => {
 
     if (pathParts.length === 1) return "PROFILE";
     if (pathParts.length === 2) return "REPO";
-    if (pathParts.length >= 3 && pathParts[2] === "tree") return "REPO_IN";
+    if (pathParts.length >= 3 && pathParts[2] === "tree")
+      return "REPO_IN_Folder";
+    if (pathParts.length >= 3 && pathParts[2] === "blob") return "REPO_IN_File";
 
     return "NONE";
   } catch {

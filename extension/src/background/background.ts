@@ -10,7 +10,11 @@ chrome.runtime.onMessage.addListener(async (message, _sender, sendResponse) => {
       chrome.tabs.sendMessage(tabId, { type: "START_SCRAPE_PROFILE" });
     }
 
-    if (pageType == "REPO" || pageType == "REPO_IN") {
+    if (
+      pageType == "REPO" ||
+      pageType == "REPO_IN_Folder" ||
+      pageType == "REPO_IN_File"
+    ) {
       chrome.tabs.sendMessage(tabId, { type: "START_SCRAPE_REPO" });
     }
   }

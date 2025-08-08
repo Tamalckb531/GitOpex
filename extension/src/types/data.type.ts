@@ -34,7 +34,12 @@ export type Enriched = {
   popularOSRepos: RepoInfo[];
 };
 
-export type UrlType = "NONE" | "PROFILE" | "REPO" | "REPO_IN";
+export type UrlType =
+  | "NONE"
+  | "PROFILE"
+  | "REPO"
+  | "REPO_IN_Folder"
+  | "REPO_IN_File";
 export type TabType = "main" | "login" | "signup" | "settings";
 
 export interface TabContextType {
