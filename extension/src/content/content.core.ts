@@ -41,3 +41,5 @@ export const getProfileData = (): ProfileDataPayload => {
     pinnedRepos,
   };
 };
+
+export const getRepoDataFromDOM = () => {};

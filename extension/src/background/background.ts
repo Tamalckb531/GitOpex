@@ -1,5 +1,9 @@
 import { ChromeTypes } from "../types/data.type";
-import { getGitHubPageType, scrapeGTProfile } from "./background.core";
+import {
+  getGitHubPageType,
+  scrapeGTProfile,
+  scrapeGTRepo,
+} from "./background.core";
 
 chrome.runtime.onMessage.addListener(async (message, _sender, sendResponse) => {
   if (message.type === ChromeTypes.INIT) {
@@ -29,12 +33,16 @@ chrome.runtime.onMessage.addListener(async (message, _sender, sendResponse) => {
       default:
         break;
     }
-  }
-
-  if (message.type === ChromeTypes.GT_PROF_DATA) {
+  } else if (message.type === ChromeTypes.GT_PROF_DATA) {
     const enriched = await scrapeGTProfile(message.payload);
 
     sendResponse({ enriched });
+
+    return true;
+  } else if (message.type === ChromeTypes.GT_PROF_DATA) {
+    const repoFullData = await scrapeGTRepo(message.payload);
+
+    sendResponse({ repoFullData });
 
     return true;
   }

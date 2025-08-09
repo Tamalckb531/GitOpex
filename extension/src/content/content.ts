@@ -1,5 +1,5 @@
 import { ChromeTypes } from "../types/data.type";
-import { getProfileData } from "./content.core";
+import { getProfileData, getRepoDataFromDOM } from "./content.core";
 
 //? Guard for content.ts
 if (!window.location.hostname.includes("github.com")) {
@@ -17,6 +17,12 @@ chrome.runtime.onMessage.addListener((message) => {
       });
       break;
     case ChromeTypes.REPO:
+      const repoBasicData = getRepoDataFromDOM();
+      chrome.runtime.sendMessage({
+        type: ChromeTypes.GT_REPO_DATA,
+        url: message.url,
+        payload: repoBasicData,
+      });
       break;
     case ChromeTypes.REPO_FOLDER:
       break;

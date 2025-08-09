@@ -92,6 +92,10 @@ export const scrapeGTProfile = async (
   return data;
 };
 
+export const scrapeGTRepo = async (repoData: any): Promise<any> => {
+  return repoData;
+};
+
 const reservedPages = [
   "dashboard",
   "notifications",
