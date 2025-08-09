@@ -20,7 +20,6 @@ chrome.runtime.onMessage.addListener((message) => {
       const repoBasicData = getRepoDataFromDOM();
       chrome.runtime.sendMessage({
         type: ChromeTypes.GT_REPO_DATA,
-        url: message.url,
         payload: repoBasicData,
       });
       break;

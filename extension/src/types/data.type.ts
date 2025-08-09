@@ -35,6 +35,31 @@ export interface ProfileDataPayload {
   pinnedRepos: string[];
 }
 
+export type FileTree = Array<{
+  name: string;
+  type: "file" | "dir";
+}>;
+
+export interface RepoBasicData {
+  owner: string;
+  repoName: string;
+  repoDescription: string | null;
+  starsCount: number;
+  forkCount: number;
+  watchersCount: number;
+  license: string | null;
+  defaultBranch: string;
+  readmeText: string | null;
+
+  fileTree: FileTree;
+
+  openIssuesCount: number;
+  openPullReqCount: number;
+
+  topics: string[];
+  lastUpdated: string | null;
+}
+
 export type Enriched = {
   info: string;
   userData: ProfileDataPayload;

@@ -16,7 +16,7 @@ chrome.runtime.onMessage.addListener(async (message, _sender, sendResponse) => {
         chrome.tabs.sendMessage(tabId, { type: ChromeTypes.PROFILE });
         break;
       case "REPO":
-        chrome.tabs.sendMessage(tabId, { type: ChromeTypes.REPO, url: url });
+        chrome.tabs.sendMessage(tabId, { type: ChromeTypes.REPO });
         break;
       case "REPO_IN_Folder":
         chrome.tabs.sendMessage(tabId, {

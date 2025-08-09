@@ -1,6 +1,9 @@
+import { parseCountString } from "../helpers/func";
 import type {
   Enriched,
+  FileTree,
   ProfileDataPayload,
+  RepoBasicData,
   RepoInfo,
   RepoTag,
   UrlType,
@@ -92,7 +95,7 @@ export const scrapeGTProfile = async (
   return data;
 };
 
-export const scrapeGTRepo = async (repoData: any): Promise<any> => {
+export const scrapeGTRepo = async (repoData: RepoBasicData): Promise<any> => {
   return repoData;
 };
 
