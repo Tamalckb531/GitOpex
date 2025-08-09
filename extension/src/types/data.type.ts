@@ -40,6 +40,12 @@ export type FileTree = Array<{
   type: "file" | "dir";
 }>;
 
+export type Enriched = {
+  info: string;
+  userData: ProfileDataPayload;
+  allRepos: RepoInfo[];
+};
+
 export interface RepoBasicData {
   owner: string;
   repoName: string;
@@ -60,10 +66,42 @@ export interface RepoBasicData {
   lastUpdated: string | null;
 }
 
-export type Enriched = {
+export type RepoContents = {
+  name: string;
+  type: string;
+  path: string;
+};
+export type IssuesPr = {
+  number: number;
+  title: string;
+  state: string;
+  labels: string[];
+};
+export type Releases = {
+  tag_name: string;
+  name: string;
+  body: string;
+  published_at: string;
+  url: string;
+};
+export type Contributors = {
+  login: string;
+  contributions: number;
+};
+
+export interface RepoApiData {
+  readmeMarkdown: string | null;
+  repoContents: RepoContents[];
+  openIssues: IssuesPr[];
+  openPullRequests: IssuesPr[];
+  releases: Releases;
+  contributors: Contributors;
+}
+
+export type RepoData = {
   info: string;
-  userData: ProfileDataPayload;
-  allRepos: RepoInfo[];
+  repoBasicData: RepoBasicData;
+  repoApiData: RepoApiData;
 };
 
 export type UrlType =
