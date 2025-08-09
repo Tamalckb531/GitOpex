@@ -61,12 +61,8 @@ export const getRepoDataFromDOM = (): RepoBasicData => {
     null;
 
   //? Get start + forks + watch
-  const starsEl = document.querySelector(
-    `a[href='/${owner}/${repoName}/stargazers']`
-  );
-  const forksEl = document.querySelector(
-    `a[href='/${owner}/${repoName}/network/members']`
-  );
+  const starsEl = document.querySelector("#repo-stars-counter-star");
+  const forksEl = document.querySelector("#repo-network-counter");
   const watchersEl = document.querySelector(
     `a[href='/${owner}/${repoName}/watchers']`
   );
@@ -93,7 +89,7 @@ export const getRepoDataFromDOM = (): RepoBasicData => {
   );
   const defaultBranch = branchBtn?.textContent?.trim() || "main";
 
-  const readmeEl = document.querySelector("#readme .markdown-body");
+  const readmeEl = document.querySelector(".markdown-body");
   let readmeText = null;
   if (readmeEl) {
     readmeText = readmeEl.textContent?.trim() || null;
@@ -101,7 +97,7 @@ export const getRepoDataFromDOM = (): RepoBasicData => {
 
   //? File and Folder structure
   const fileTree: FileTree = [];
-  const items = document.querySelectorAll('div[role="row"]'); // each file/folder line
+  const items = document.querySelectorAll(".react-directory-row"); // each file/folder line
 
   if (items.length === 0) {
     // Fall back for old UI
@@ -126,12 +122,12 @@ export const getRepoDataFromDOM = (): RepoBasicData => {
     });
   } else {
     items.forEach((row) => {
-      const link = row.querySelector("a.js-navigation-open");
+      const link = row.querySelector("a.Link--primary");
       if (!link) return;
       const name = link.textContent?.trim() || "";
 
       let type: "file" | "dir" = "file";
-      const dirIcon = row.querySelector('svg[aria-label="Directory"]');
+      const dirIcon = row.querySelector("svg.icon-directory");
 
       if (dirIcon) type = "dir";
 
@@ -140,14 +136,10 @@ export const getRepoDataFromDOM = (): RepoBasicData => {
   }
 
   //? Get Open issues and Pr count
-  const issuesBadge = document.querySelector(
-    'a[href$="/issues"] .Counter, a[href$="/issues"] .Counter--small'
-  );
+  const issuesBadge = document.querySelector("#issues-repo-tab-count");
   const openIssuesCount = parseCountString(issuesBadge?.textContent || "");
 
-  const prsBadge = document.querySelector(
-    'a[href$="/pulls"] .Counter, a[href$="/pulls"] .Counter--small'
-  );
+  const prsBadge = document.querySelector("#pull-requests-repo-tab-count");
   const openPullReqCount = parseCountString(prsBadge?.textContent || "");
 
   //? Get Repo topics and last update
