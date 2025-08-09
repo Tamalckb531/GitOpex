@@ -54,9 +54,8 @@ export const slimRepos = async (
 };
 
 export const scrapeGTProfile = async (
-  payload: ProfileDataPayload
+  userData: ProfileDataPayload
 ): Promise<Enriched> => {
-  const userData: ProfileDataPayload = payload;
   const username = userData.username;
 
   const reposRes = await fetch(

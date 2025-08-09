@@ -1,5 +1,5 @@
 import { ChromeTypes } from "../types/data.type";
-import { getGitHubPageType, scrapeGitHubProfile } from "./background.core";
+import { getGitHubPageType, scrapeGTProfile } from "./background.core";
 
 chrome.runtime.onMessage.addListener(async (message, _sender, sendResponse) => {
   if (message.type === ChromeTypes.INIT) {
@@ -26,7 +26,7 @@ chrome.runtime.onMessage.addListener(async (message, _sender, sendResponse) => {
   }
 
   if (message.type === ChromeTypes.GT_PROF_DATA) {
-    const enriched = await scrapeGitHubProfile(message.payload);
+    const enriched = await scrapeGTProfile(message.payload);
 
     sendResponse({ enriched });
 
