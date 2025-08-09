@@ -12,13 +12,19 @@ chrome.runtime.onMessage.addListener(async (message, _sender, sendResponse) => {
         chrome.tabs.sendMessage(tabId, { type: ChromeTypes.PROFILE });
         break;
       case "REPO":
-        chrome.tabs.sendMessage(tabId, { type: ChromeTypes.REPO });
+        chrome.tabs.sendMessage(tabId, { type: ChromeTypes.REPO, url: url });
         break;
       case "REPO_IN_Folder":
-        chrome.tabs.sendMessage(tabId, { type: ChromeTypes.REPO_FOLDER });
+        chrome.tabs.sendMessage(tabId, {
+          type: ChromeTypes.REPO_FOLDER,
+          url: url,
+        });
         break;
       case "REPO_IN_File":
-        chrome.tabs.sendMessage(tabId, { type: ChromeTypes.REPO_FILE });
+        chrome.tabs.sendMessage(tabId, {
+          type: ChromeTypes.REPO_FILE,
+          url: url,
+        });
         break;
       default:
         break;
