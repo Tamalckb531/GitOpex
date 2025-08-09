@@ -2,6 +2,7 @@ import type {
   Enriched,
   ProfileDataPayload,
   RepoInfo,
+  RepoTag,
   UrlType,
 } from "../types/data.type";
 
@@ -9,7 +10,28 @@ export const isGithubUrl = (url: string): boolean => {
   return url.includes("github.com");
 };
 
-export const slimRepo = (repo: any): RepoInfo => {
+export const slimRepos = async (
+  repo: any,
+  username: string
+): Promise<RepoInfo> => {
+  const langRes = await fetch(
+    `https://api.github.com/repos/${username}/${repo.name}/languages`
+  );
+
+  //? Build language array
+  const langData = await langRes.json();
+  const languagesArray = Object.keys(langData);
+
+  //? Build tags array
+  const tags: RepoTag[] = [];
+  if (repo.open_issues_count > 0) tags.push("open_issues");
+  if (repo.license > 0) tags.push("open_source");
+  if (repo.forks > 0) tags.push("can_fork");
+  const popularityScore =
+    repo.stargazers_count + repo.forks + repo.open_issues_count;
+  if (popularityScore > 1000) tags.push("popular");
+  if (!repo.private) tags.push("public");
+
   return {
     id: repo.id,
     name: repo.name,
@@ -18,7 +40,7 @@ export const slimRepo = (repo: any): RepoInfo => {
     size: repo.size,
     stargazers_count: repo.stargazers_count,
     watchers_count: repo.watchers_count,
-    language: repo.language,
+    language: languagesArray,
     open_issues_count: repo.open_issues_count,
     license: repo.license ? { name: repo.license.name } : null,
     forks: repo.forks,
@@ -27,38 +49,31 @@ export const slimRepo = (repo: any): RepoInfo => {
     updated_at: repo.updated_at,
     has_issues: repo.has_issues,
     html_url: repo.html_url,
+    tag: tags,
   };
 };
 
-export const scrapeGitHubProfile = async (
+export const scrapeGTProfile = async (
   payload: ProfileDataPayload
 ): Promise<Enriched> => {
   const userData: ProfileDataPayload = payload;
-  const username: string = userData.username;
+  const username = userData.username;
 
-  //? Fetch repos
   const reposRes = await fetch(
     `https://api.github.com/users/${username}/repos?per_page=100&type=owner&sort=updated`
   );
   const repos = await reposRes.json();
 
-  const allRepos: RepoInfo[] = repos.map(slimRepo);
+  const topRepos = repos.slice(0, 7);
 
-  //? Extract enriched information
-  const activeRepos = allRepos.filter((repo: any) => repo.open_issues_count);
-  const popularOSRepos = [...allRepos]
-    .filter((repo: any) => repo.license)
-    .sort((a, b) => {
-      const aScore = a.stargazers_count + a.forks + a.open_issues_count;
-      const bScore = b.stargazers_count + b.forks + b.open_issues_count;
-      return bScore - aScore;
-    })
-    .slice(0, 5);
-  const enriched: Enriched = {
+  const enrichedRepos = await Promise.all(
+    topRepos.map((repo: any) => slimRepos(repo, username))
+  );
+
+  const data = {
+    info: `profile/${username}`,
     userData,
-    allRepos,
-    popularOSRepos,
-    activeRepos,
+    allRepos: enrichedRepos,
   };
 
   //? Send to backend server
@@ -68,14 +83,14 @@ export const scrapeGitHubProfile = async (
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(enriched),
+      body: JSON.stringify(data),
     });
-    console.log(enriched);
+    console.log(data);
   } catch (err) {
     console.error("Failed to send data to backend");
   }
 
-  return enriched;
+  return data;
 };
 
 const reservedPages = [

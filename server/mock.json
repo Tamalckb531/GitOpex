@@ -116,6 +116,57 @@
       }
     ]
   },
+  "DataMod": {
+    "info": "profile/Tamalckb531",
+    "userData": {
+      "username": "Tamalckb531",
+      "name": "Tamal",
+      "bio": "Passionate dev building cool things with MERN and AI.",
+      "location": "Chattogram, Bangladesh",
+      "website": "https://tamal.dev",
+      "repoCount": "5",
+      "pinnedRepos": [
+        "rankdevs",
+        "unshackled"
+      ]
+    },
+    "allRepos": [
+      {
+        "id": 1,
+        "name": "rankdevs",
+        "full_name": "Tamalckb531/rankdevs",
+        "description": "Track coding time & showcase dev effort.",
+        "size": 2048,
+        "stargazers_count": 11,
+        "watchers_count": 5,
+        "language": [
+          "TypeScript",
+          "React"
+        ],
+        "open_issues_count": 2,
+        "license": {
+          "name": "MIT"
+        },
+        "forks": 1,
+        "open_issues": 2,
+        "topics": [
+          "developer",
+          "tracker",
+          "opensource"
+        ],
+        "updated_at": "2024-06-01T10:00:00Z",
+        "has_issues": true,
+        "html_url": "https://github.com/Tamalckb531/rankdevs",
+        "tag": [
+          "open_issues",
+          "open_source",
+          "can_fork",
+          "popular",
+          "public"
+        ]
+      }
+    ]
+  },
   "UserSignup": {
     "email": "ckbtamaldipnew@gmail.com",
     "password": "boomdiddy556",

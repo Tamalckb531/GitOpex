@@ -1,3 +1,10 @@
+export type RepoTag =
+  | "open_issues"
+  | "open_source"
+  | "can_fork"
+  | "popular"
+  | "public";
+
 export interface RepoInfo {
   id: number;
   name: string;
@@ -6,7 +13,7 @@ export interface RepoInfo {
   size: number;
   stargazers_count: number;
   watchers_count: number;
-  language: string | null;
+  language: string[] | null;
   open_issues_count: number;
   license: { name: string } | null;
   forks: number;
@@ -15,6 +22,7 @@ export interface RepoInfo {
   updated_at: string;
   has_issues: boolean;
   html_url: string;
+  tag: RepoTag[];
 }
 
 export interface ProfileDataPayload {
@@ -28,10 +36,9 @@ export interface ProfileDataPayload {
 }
 
 export type Enriched = {
+  info: string;
   userData: ProfileDataPayload;
   allRepos: RepoInfo[];
-  activeRepos: RepoInfo[];
-  popularOSRepos: RepoInfo[];
 };
 
 export type UrlType =
