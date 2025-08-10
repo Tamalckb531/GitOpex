@@ -53,3 +53,14 @@ export const parseCountString = (str: string | null): number => {
 export const isGithubUrl = (url: string): boolean => {
   return url.includes("github.com");
 };
+
+const headers = {
+  Accept: "application/vnd.github.v3+json",
+};
+
+export const fetchJson = async (url: string): Promise<any> => {
+  const res = await fetch(url, { headers });
+  if (!res.ok) throw new Error(`Failed to fetch ${url}: ${res.statusText}`);
+
+  return await res.json();
+};

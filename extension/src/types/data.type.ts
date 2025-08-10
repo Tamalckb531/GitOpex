@@ -94,8 +94,8 @@ export interface RepoApiData {
   repoContents: RepoContents[];
   openIssues: IssuesPr[];
   openPullRequests: IssuesPr[];
-  releases: Releases;
-  contributors: Contributors;
+  releases: Releases[];
+  contributors: Contributors[];
 }
 
 export type RepoData = {
@@ -137,6 +137,10 @@ export const Storage = {
 export const ApiEndPoint = {
   LOGIN: "api/auth/login",
   SIGNUP: "api/auth/signup",
+  PROFILE: "api/data/rag/profile",
+  REPO: "api/data/rag/repo",
+  REPO_FILE: "api/data/rag/repo_file",
+  REPO_FOLDER: "api/data/rag/repo_folder",
 } as const;
 
 export const ChromeTypes = {
