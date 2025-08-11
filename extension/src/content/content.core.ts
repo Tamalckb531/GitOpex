@@ -174,3 +174,7 @@ export const getRepoDataFromDOM = (): RepoBasicData => {
 
   return data;
 };
+
+export const getRepoFolderDataFromDOM = () => {};
+
+export const getRepoFileDataFromDOM = () => {};

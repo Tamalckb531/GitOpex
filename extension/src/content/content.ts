@@ -1,5 +1,10 @@
 import { ChromeTypes } from "../types/data.type";
-import { getProfileData, getRepoDataFromDOM } from "./content.core";
+import {
+  getProfileData,
+  getRepoDataFromDOM,
+  getRepoFileDataFromDOM,
+  getRepoFolderDataFromDOM,
+} from "./content.core";
 
 //? Guard for content.ts
 if (!window.location.hostname.includes("github.com")) {
@@ -24,10 +29,20 @@ chrome.runtime.onMessage.addListener((message) => {
       });
       break;
     case ChromeTypes.REPO_FOLDER:
+      const repoFolderData = getRepoFolderDataFromDOM();
+      chrome.runtime.sendMessage({
+        type: ChromeTypes.GT_REPO_FOLDER_DATA,
+        payload: repoFolderData,
+      });
       break;
     case ChromeTypes.REPO_FILE:
+      const repoFileData = getRepoFileDataFromDOM();
+      chrome.runtime.sendMessage({
+        type: ChromeTypes.GT_REPO_FILE_DATA,
+        payload: repoFileData,
+      });
       break;
     default:
-      console.warn("Unknown message type:", message.type);
+      console.warn("Unknown message type: ", message.type);
   }
 });

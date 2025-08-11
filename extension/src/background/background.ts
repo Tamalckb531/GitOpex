@@ -45,5 +45,9 @@ chrome.runtime.onMessage.addListener(async (message, _sender, sendResponse) => {
     sendResponse({ repoFullData });
 
     return true;
+  } else if (message.type === ChromeTypes.GT_REPO_FOLDER_DATA) {
+    return true;
+  } else if (message.type === ChromeTypes.GT_REPO_FILE_DATA) {
+    return true;
   }
 });
