@@ -90,8 +90,6 @@ export type Contributors = {
 };
 
 export interface RepoApiData {
-  readmeMarkdown: string | null;
-  repoContents: RepoContents[];
   openIssues: IssuesPr[];
   openPullRequests: IssuesPr[];
   releases: Releases[];

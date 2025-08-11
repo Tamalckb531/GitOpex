@@ -106,36 +106,7 @@ export const scrapeGTProfile = async (
 export const scrapeGTRepo = async (
   repoBasicData: RepoBasicData
 ): Promise<RepoData> => {
-  const { owner, repoName, defaultBranch } = repoBasicData;
-
-  //? Fetch Readme markdown
-  let readmeMarkdown: string | null = null;
-  try {
-    const readmeRes = await fetchJson(
-      `https://api.github.com/repos/${owner}/${repoName}/readme`
-    );
-    if (readmeRes && readmeRes.content)
-      readmeMarkdown = atob(readmeRes.content.replace(/\n/g, ""));
-  } catch (error: any) {
-    console.warn("Failed to fetch README markdown", error);
-  }
-
-  //? Fetch repo contents (root directory) - gives list of files
-  let repoContents: Array<{ name: string; type: string; path: string }> = [];
-  try {
-    const contentsRes = await fetchJson(
-      `https://api.github.com/repos/${owner}/${repoName}/contents?ref=${defaultBranch}`
-    );
-    if (Array.isArray(contentsRes)) {
-      repoContents = contentsRes.map((item: any) => ({
-        name: item.name,
-        type: item.type,
-        path: item.path,
-      }));
-    }
-  } catch (err) {
-    console.warn("Failed to fetch repository contents", err);
-  }
+  const { owner, repoName } = repoBasicData;
 
   //? Fetch open issues (Limit 30)
   let openIssues: IssuesPr[] = [];
@@ -145,7 +116,7 @@ export const scrapeGTRepo = async (
     );
 
     openIssues = issuesRes
-      .filter((issue: any) => !issue.pull_request) //! Suspicious
+      .filter((issue: any) => !issue.pull_request)
       .map((issue: any) => ({
         number: issue.number,
         title: issue.title,
@@ -163,14 +134,12 @@ export const scrapeGTRepo = async (
       `https://api.github.com/repos/${owner}/${repoName}/pulls?state=open&per_page=30`
     );
 
-    openPullRequests = prRes
-      .filter((pr: any) => !pr.pull_request) //! Suspicious
-      .map((pr: any) => ({
-        number: pr.number,
-        title: pr.title,
-        state: pr.state,
-        labels: pr.labels.map((label: any) => label.name),
-      }));
+    openPullRequests = prRes.map((pr: any) => ({
+      number: pr.number,
+      title: pr.title,
+      state: pr.state,
+      labels: pr.labels.map((label: any) => label.name),
+    }));
   } catch (err) {
     console.warn("Failed to fetch open pull requests", err);
   }
@@ -214,8 +183,6 @@ export const scrapeGTRepo = async (
 
   //? Making finalize data
   const repoApiData: RepoApiData = {
-    readmeMarkdown,
-    repoContents,
     openIssues,
     openPullRequests,
     releases,
