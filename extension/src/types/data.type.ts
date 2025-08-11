@@ -102,6 +102,21 @@ export type RepoData = {
   repoApiData: RepoApiData;
 };
 
+export type RepoFolderData = {
+  info: string;
+  folderName: string;
+  path: string;
+  readmeText: string | null;
+  fileTree: FileTree;
+};
+
+export type RepoFileData = {
+  info: string;
+  fileName: string;
+  path: string;
+  content: string | null;
+};
+
 export type UrlType =
   | "NONE"
   | "PROFILE"

@@ -11,6 +11,7 @@ import type {
   RepoInfo,
   RepoTag,
   UrlType,
+  RepoFolderData,
 } from "../types/data.type";
 import { ApiEndPoint } from "../types/data.type";
 
@@ -210,6 +211,25 @@ export const scrapeGTRepo = async (
   }
 
   return data;
+};
+
+export const sendRepoFolderData = async (
+  data: RepoFolderData
+): Promise<boolean> => {
+  try {
+    await fetch(`${apiBaseUrl}/${ApiEndPoint.REPO_FOLDER}`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    });
+    console.log("Sent repo folder data:", data);
+  } catch (err) {
+    console.error("Failed to send repo folder data to backend", err);
+    return false;
+  }
+  return true;
 };
 
 const reservedPages = [

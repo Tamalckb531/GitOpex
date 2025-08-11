@@ -3,6 +3,7 @@ import type {
   FileTree,
   ProfileDataPayload,
   RepoBasicData,
+  RepoFolderData,
 } from "../types/data.type";
 
 //? Get basic profile data
@@ -175,6 +176,78 @@ export const getRepoDataFromDOM = (): RepoBasicData => {
   return data;
 };
 
-export const getRepoFolderDataFromDOM = () => {};
+export const getRepoFolderDataFromDOM = (): RepoFolderData => {
+  const [owner, repoName, ...otherPaths] = window.location.pathname
+    .slice(1)
+    .split("/");
+
+  //? Get info, foldername and path
+  const folderName = otherPaths[otherPaths.length - 1];
+
+  let path: string = `${repoName}`;
+  for (let i = 0; i < otherPaths.length; i++) {
+    path += `/` + otherPaths[i];
+  }
+
+  const info = `repo/${owner}/${path}`;
+
+  //? Get readme text
+  let readmeText: string | null = null;
+  const readmeDiv = document.querySelector("#readme");
+  if (readmeDiv) {
+    const contentDiv = readmeDiv.children[1];
+    readmeText = contentDiv.textContent.replace(/\n/g, " ").trim();
+  }
+
+  //? File and Folder structure
+  const fileTree: FileTree = [];
+  const items = document.querySelectorAll(".react-directory-row"); // each file/folder line
+
+  if (items.length === 0) {
+    // Fall back for old UI
+    const oldItems = document.querySelectorAll(
+      'ul[aria-label="Repository"] > li'
+    );
+
+    oldItems.forEach((el) => {
+      const nameEl = el.querySelector("a.js-navigation-open");
+      const iconEl = el.querySelector("svg.octicon");
+
+      if (nameEl) {
+        const name = nameEl.textContent?.trim() || "";
+
+        const type =
+          iconEl?.getAttribute("aria-label") === "Directory" ||
+          iconEl?.classList.contains("octicon-file-directory")
+            ? "dir"
+            : "file";
+        fileTree.push({ name, type });
+      }
+    });
+  } else {
+    items.forEach((row) => {
+      const link = row.querySelector("a.Link--primary");
+      if (!link) return;
+      const name = link.textContent?.trim() || "";
+
+      let type: "file" | "dir" = "file";
+      const dirIcon = row.querySelector("svg.icon-directory");
+
+      if (dirIcon) type = "dir";
+
+      fileTree.push({ name, type });
+    });
+  }
+
+  const repoFolderData: RepoFolderData = {
+    info,
+    folderName,
+    path,
+    readmeText,
+    fileTree,
+  };
+
+  return repoFolderData;
+};
 
 export const getRepoFileDataFromDOM = () => {};
