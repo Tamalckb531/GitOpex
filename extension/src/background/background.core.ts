@@ -12,6 +12,7 @@ import type {
   RepoTag,
   UrlType,
   RepoFolderData,
+  RepoFileData,
 } from "../types/data.type";
 import { ApiEndPoint } from "../types/data.type";
 
@@ -227,6 +228,25 @@ export const sendRepoFolderData = async (
     console.log("Sent repo folder data:", data);
   } catch (err) {
     console.error("Failed to send repo folder data to backend", err);
+    return false;
+  }
+  return true;
+};
+
+export const sendRepoFileData = async (
+  data: RepoFileData
+): Promise<boolean> => {
+  try {
+    await fetch(`${apiBaseUrl}/${ApiEndPoint.REPO_FILE}`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    });
+    console.log("Sent repo file data : ", data);
+  } catch (err) {
+    console.error("Failed to send repo file data to backend : ", err);
     return false;
   }
   return true;

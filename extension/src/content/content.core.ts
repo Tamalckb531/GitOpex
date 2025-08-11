@@ -3,6 +3,7 @@ import type {
   FileTree,
   ProfileDataPayload,
   RepoBasicData,
+  RepoFileData,
   RepoFolderData,
 } from "../types/data.type";
 
@@ -250,4 +251,34 @@ export const getRepoFolderDataFromDOM = (): RepoFolderData => {
   return repoFolderData;
 };
 
-export const getRepoFileDataFromDOM = () => {};
+export const getRepoFileDataFromDOM = (): RepoFileData => {
+  const [owner, repoName, ...otherPaths] = window.location.pathname
+    .slice(1)
+    .split("/");
+
+  //? Get info, file and path
+  const fileName = otherPaths[otherPaths.length - 1];
+
+  let path: string = `${repoName}`;
+  for (let i = 0; i < otherPaths.length; i++) {
+    path += `/` + otherPaths[i];
+  }
+
+  const info = `repo/${owner}/${path}`;
+
+  //? Get content
+  let content: string | null = null;
+  const contentElem = document.querySelector("#read-only-cursor-text-area");
+  if (contentElem) {
+    content = contentElem.textContent.replace(/\n/g, " ").trim();
+  }
+
+  const repoFileData: RepoFileData = {
+    info,
+    fileName,
+    path,
+    content,
+  };
+
+  return repoFileData;
+};

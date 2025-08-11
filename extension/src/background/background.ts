@@ -3,6 +3,7 @@ import {
   getGitHubPageType,
   scrapeGTProfile,
   scrapeGTRepo,
+  sendRepoFileData,
   sendRepoFolderData,
 } from "./background.core";
 
@@ -53,6 +54,10 @@ chrome.runtime.onMessage.addListener(async (message, _sender, sendResponse) => {
       : sendResponse({ msg: "Data couldn't sent" });
     return res;
   } else if (message.type === ChromeTypes.GT_REPO_FILE_DATA) {
-    return true;
+    const res = await sendRepoFileData(message.payload);
+    res
+      ? sendResponse({ msg: "Data send successfully" })
+      : sendResponse({ msg: "Data couldn't sent" });
+    return res;
   }
 });
