@@ -256,8 +256,6 @@ const reservedPages = [
   "dashboard",
   "notifications",
   "settings",
-  "pulls",
-  "issues",
   "marketplace",
   "explore",
   "apps",
@@ -271,6 +269,39 @@ const reservedPages = [
   "projects",
 ];
 
+const repoPage = [
+  "issues",
+  "pulls",
+  "actions",
+  "projects",
+  "wiki",
+  "security",
+  "pulse",
+  "settings",
+];
+
+const UrlToInfo = (url: string): string => {
+  try {
+    const parsedUrl = new URL(url);
+    if (parsedUrl.hostname !== "github.com") return "";
+
+    const pathSegments = parsedUrl.pathname.split("/").filter(Boolean);
+
+    if (pathSegments.length === 1) {
+      return `profile/${pathSegments[0]}`;
+    } else if (
+      pathSegments.length === 2 ||
+      (pathSegments.length >= 3 && repoPage.includes(pathSegments[2]))
+    ) {
+      return `repo/${pathSegments[0]}/${pathSegments[1]}`;
+    } else if (pathSegments.length >= 3) {
+      return `repo/${pathSegments.join("/")}`;
+    } else return "";
+  } catch {
+    return "";
+  }
+};
+
 export const getGitHubPageType = (url: string): UrlType => {
   try {
     const parsed = new URL(url);
@@ -282,7 +313,11 @@ export const getGitHubPageType = (url: string): UrlType => {
     if (reservedPages.includes(pathParts[0])) return "NONE";
 
     if (pathParts.length === 1) return "PROFILE";
-    if (pathParts.length === 2) return "REPO";
+    if (
+      pathParts.length === 2 ||
+      (pathParts.length >= 3 && repoPage.includes(pathParts[2]))
+    )
+      return "REPO";
     if (pathParts.length >= 3 && pathParts[2] === "tree")
       return "REPO_IN_Folder";
     if (pathParts.length >= 3 && pathParts[2] === "blob") return "REPO_IN_File";
@@ -291,4 +326,24 @@ export const getGitHubPageType = (url: string): UrlType => {
   } catch {
     return "NONE";
   }
+};
+
+export const isDataExist = async (url: string): Promise<boolean> => {
+  let flag: boolean = false;
+  const info = UrlToInfo(url);
+
+  try {
+    const res = await fetch(`${apiBaseUrl}/${ApiEndPoint.CHECK_DATA}`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(info),
+    });
+    flag = await res.json();
+  } catch (err) {
+    console.error("Failed to check data exist or not in vector : ", err);
+    return false;
+  }
+  return flag;
 };

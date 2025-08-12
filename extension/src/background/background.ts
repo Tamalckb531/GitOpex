@@ -1,6 +1,7 @@
 import { ChromeTypes } from "../types/data.type";
 import {
   getGitHubPageType,
+  isDataExist,
   scrapeGTProfile,
   scrapeGTRepo,
   sendRepoFileData,
@@ -12,6 +13,13 @@ chrome.runtime.onMessage.addListener(async (message, _sender, sendResponse) => {
     const { url, tabId } = message;
 
     const pageType = getGitHubPageType(url);
+    let exist: boolean = false;
+
+    if (pageType !== "NONE") {
+      exist = await isDataExist(url);
+    }
+
+    if (exist) return;
 
     switch (pageType) {
       case "PROFILE":
