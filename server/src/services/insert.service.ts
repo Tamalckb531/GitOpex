@@ -1,3 +1,4 @@
+import { formatDatetime } from "./../libs/utils";
 import { app } from "../agents";
 import { Constants, Enriched, VectorData } from "../types/data.type";
 import { storeEmbeddings } from "../vector/embed";
@@ -63,35 +64,33 @@ const deleteEmbeddings = async (info: string, pineconeKey: string) => {
 };
 
 const stringifyEnriched = (enriched: Enriched): string[] => {
-  const { userData, allRepos, activeRepos, popularOSRepos } = enriched;
+  const { userData, allRepos } = enriched;
 
-  const profileText = `Name: ${userData.name}, Username: ${userData.username}, Bio: ${userData.bio}, Location: ${userData.location}, Website: ${userData.website}`;
+  const profileText = `Name: ${userData.name}, Username: ${
+    userData.username
+  }, Bio: ${userData.bio}, Location: ${userData.location}, Website: ${
+    userData.website
+  }, total repository: ${
+    userData.repoCount
+  }, pinned repository : ${userData.pinnedRepos?.join(", ")}`;
 
   const repoTexts = allRepos.map((repo) => {
-    return `Repository: ${repo.name}, Description: ${
-      repo.description
-    }, Language: ${repo.language}, Stars: ${
+    return `Repository: ${repo.name}, Full name: ${
+      repo.full_name
+    }, Description: ${repo.description},  Size: ${
+      repo.size
+    } Kilobyte, Language: ${repo.language?.join(", ")}, Stars: ${
       repo.stargazers_count
-    }, Topics: ${repo.topics?.join(", ")}`;
+    }, Watchers : ${repo.watchers_count}, Total Open issues: ${
+      repo.open_issues_count
+    }, License : ${repo.license?.name}, Total Fork : ${
+      repo.forks
+    }, topics : ${repo.topics?.join(", ")}, Last update : ${formatDatetime(
+      repo.updated_at || " "
+    )}, Link to github : ${repo.html_url}, Tags : ${repo.tag?.join(", ")}`;
   });
 
-  const activeRepoTexts = activeRepos.map((repo) => {
-    return `Active Repository: ${repo.name}, Description: ${
-      repo.description
-    }, Language: ${repo.language}, Stars: ${
-      repo.stargazers_count
-    }, Topics: ${repo.topics?.join(", ")}`;
-  });
-
-  const popularOsTexts = popularOSRepos.map((repo) => {
-    return `Popular Open Source Repo: ${repo.name}, Description: ${
-      repo.description
-    }, Language: ${repo.language}, Stars: ${
-      repo.stargazers_count
-    }, Topics: ${repo.topics?.join(", ")}`;
-  });
-
-  return [profileText, ...repoTexts, ...activeRepoTexts, ...popularOsTexts];
+  return [profileText, ...repoTexts];
 };
 
 export const handleEnrichedData = async (
