@@ -1,6 +1,14 @@
 import { formatDatetime } from "./../libs/utils";
 import { app } from "../agents";
-import { Constants, Enriched, UrlType, VectorData } from "../types/data.type";
+import {
+  Constants,
+  Enriched,
+  RepoData,
+  RepoFileData,
+  RepoFolderData,
+  UrlType,
+  VectorData,
+} from "../types/data.type";
 import { storeEmbeddings } from "../vector/embed";
 import { decryptApiKey } from "../libs/encryptions";
 import { HTTPException } from "hono/http-exception";
@@ -63,7 +71,7 @@ const deleteEmbeddings = async (info: string, pineconeKey: string) => {
   }
 };
 
-const stringifyEnriched = (enriched: Enriched): string[] => {
+const stringifyProfile = (enriched: Enriched): string[] => {
   const { userData, allRepos } = enriched;
 
   const profileText = `Name: ${userData.name}, Username: ${
@@ -93,8 +101,18 @@ const stringifyEnriched = (enriched: Enriched): string[] => {
   return [profileText, ...repoTexts];
 };
 
+const stringifyRepo = (repo: RepoData): string[] => {
+  return [""];
+};
+const stringifyRepoFile = (file: RepoFileData): string[] => {
+  return [""];
+};
+const stringifyRepoFolder = (folder: RepoFolderData): string[] => {
+  return [""];
+};
+
 export const handleEnrichedData = async (
-  enriched: Enriched,
+  data: Enriched | RepoData | RepoFileData | RepoFolderData,
   type: UrlType,
   userId: string | null,
   key: string,
@@ -104,10 +122,26 @@ export const handleEnrichedData = async (
 ) => {
   try {
     const prisma = getPrisma(db_url);
-    const isStorable: boolean = await storable(enriched.info, pineconeKey);
+    const isStorable: boolean = await storable(data.info, pineconeKey);
     if (!isStorable) return;
 
-    const docs = stringifyEnriched(enriched);
+    let docs: string[];
+    switch (type) {
+      case "PROFILE":
+        docs = stringifyProfile(data as Enriched);
+        break;
+      case "REPO":
+        docs = stringifyRepo(data as RepoData);
+        break;
+      case "REPO_IN_File":
+        docs = stringifyRepoFile(data as RepoFileData);
+        break;
+      case "REPO_IN_Folder":
+        docs = stringifyRepoFolder(data as RepoFolderData);
+        break;
+      default:
+        throw new Error("Unsupported Url");
+    }
 
     let apiKey: string = key;
     if (userId) {
@@ -122,7 +156,7 @@ export const handleEnrichedData = async (
       }
     }
 
-    await storeEmbeddings(docs, apiKey, enriched.info, pineconeKey);
+    await storeEmbeddings(docs, apiKey, data.info, pineconeKey);
   } catch (e: any) {
     throw new HTTPException(500, {
       message: e.message || "Error occurred while getting the apiKey of user",
