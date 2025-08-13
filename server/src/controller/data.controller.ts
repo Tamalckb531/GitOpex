@@ -1,6 +1,6 @@
 import { Context } from "hono";
 import { handleEnrichedData, handleInvoking } from "../services/insert.service";
-import { Enriched, Query } from "../types/data.type";
+import { Enriched, Query, UrlType } from "../types/data.type";
 
 export const insertDataProfile = async (c: Context) => {
   const enriched: Enriched = await c.req.json();
@@ -9,9 +9,11 @@ export const insertDataProfile = async (c: Context) => {
   const encryptKey: string = c.env.ENCRYPTION_KEY;
   const pineconeKey: string = c.env.PINECONE_API_KEY;
   const db_url: string = c.env.DATABASE_URL;
+  const type: UrlType = "PROFILE";
 
   await handleEnrichedData(
     enriched,
+    type,
     userId,
     apiKey,
     encryptKey,
@@ -28,9 +30,11 @@ export const insertDataRepo = async (c: Context) => {
   const encryptKey: string = c.env.ENCRYPTION_KEY;
   const pineconeKey: string = c.env.PINECONE_API_KEY;
   const db_url: string = c.env.DATABASE_URL;
+  const type: UrlType = "REPO";
 
   await handleEnrichedData(
     enriched,
+    type,
     userId,
     apiKey,
     encryptKey,
@@ -47,9 +51,11 @@ export const insertDataRepoFile = async (c: Context) => {
   const encryptKey: string = c.env.ENCRYPTION_KEY;
   const pineconeKey: string = c.env.PINECONE_API_KEY;
   const db_url: string = c.env.DATABASE_URL;
+  const type: UrlType = "REPO_IN_File";
 
   await handleEnrichedData(
     enriched,
+    type,
     userId,
     apiKey,
     encryptKey,
@@ -66,9 +72,11 @@ export const insertDataRepoFolder = async (c: Context) => {
   const encryptKey: string = c.env.ENCRYPTION_KEY;
   const pineconeKey: string = c.env.PINECONE_API_KEY;
   const db_url: string = c.env.DATABASE_URL;
+  const type: UrlType = "REPO_IN_Folder";
 
   await handleEnrichedData(
     enriched,
+    type,
     userId,
     apiKey,
     encryptKey,
@@ -85,15 +93,6 @@ export const checker = async (c: Context) => {
   const encryptKey: string = c.env.ENCRYPTION_KEY;
   const pineconeKey: string = c.env.PINECONE_API_KEY;
   const db_url: string = c.env.DATABASE_URL;
-
-  await handleEnrichedData(
-    enriched,
-    userId,
-    apiKey,
-    encryptKey,
-    pineconeKey,
-    db_url
-  );
 
   return c.json({ status: "ok" });
 };

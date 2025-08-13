@@ -149,7 +149,12 @@ export type Query = {
   question: string;
 };
 
-export type UrlType = "NONE" | "PROFILE" | "REPO" | "REPO_IN";
+export type UrlType =
+  | "NONE"
+  | "PROFILE"
+  | "REPO"
+  | "REPO_IN_Folder"
+  | "REPO_IN_File";
 
 export enum Constants {
   GITOPEX_INDEX = "gitopex-index",

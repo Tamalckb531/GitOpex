@@ -1,6 +1,6 @@
 import { formatDatetime } from "./../libs/utils";
 import { app } from "../agents";
-import { Constants, Enriched, VectorData } from "../types/data.type";
+import { Constants, Enriched, UrlType, VectorData } from "../types/data.type";
 import { storeEmbeddings } from "../vector/embed";
 import { decryptApiKey } from "../libs/encryptions";
 import { HTTPException } from "hono/http-exception";
@@ -95,6 +95,7 @@ const stringifyEnriched = (enriched: Enriched): string[] => {
 
 export const handleEnrichedData = async (
   enriched: Enriched,
+  type: UrlType,
   userId: string | null,
   key: string,
   encryptKey: string,
