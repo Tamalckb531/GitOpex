@@ -203,7 +203,10 @@ Last updated: ${formatDatetime(repoBasicData.lastUpdated || "Unknown")}.`;
 };
 
 const stringifyRepoFile = (file: RepoFileData): string[] => {
-  return [""];
+  const fileText = `File Name : ${file.fileName}, located at : ${
+    file.path
+  }, content or code in that file : ${file.content || "No content"}`;
+  return [fileText];
 };
 const stringifyRepoFolder = (folder: RepoFolderData): string[] => {
   return [""];
