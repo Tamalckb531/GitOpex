@@ -35,16 +35,16 @@ export interface ProfileDataPayload {
   pinnedRepos: string[];
 }
 
-export type FileTree = Array<{
-  name: string;
-  type: "file" | "dir";
-}>;
-
 export type Enriched = {
   info: string;
   userData: ProfileDataPayload;
   allRepos: RepoInfo[];
 };
+
+export type FileTree = Array<{
+  name: string;
+  type: "file" | "dir";
+}>;
 
 export interface RepoBasicData {
   owner: string;
