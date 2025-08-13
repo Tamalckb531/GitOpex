@@ -3,6 +3,7 @@ import { app } from "../agents";
 import {
   Constants,
   Enriched,
+  FileTree,
   RepoData,
   RepoFileData,
   RepoFolderData,
@@ -102,8 +103,105 @@ const stringifyProfile = (enriched: Enriched): string[] => {
 };
 
 const stringifyRepo = (repo: RepoData): string[] => {
-  return [""];
+  const { repoBasicData, repoApiData } = repo;
+
+  //! Basic info summery
+  const basicInfo: string = `Repository: ${repoBasicData.owner}/${
+    repoBasicData.repoName
+  }.
+Description: ${repoBasicData.repoDescription || "No description provided."}
+Stars: ${repoBasicData.starsCount}, Forks: ${
+    repoBasicData.forkCount
+  }, Watchers: ${repoBasicData.watchersCount}.
+License: ${repoBasicData.license || "No license specified"}.
+Default branch: ${repoBasicData.defaultBranch},
+Open issues: ${repoBasicData.openIssuesCount}, Open pull requests: ${
+    repoBasicData.openPullReqCount
+  }.
+Topics: ${repoBasicData.topics.join(", ") || "None"}.
+Last updated: ${formatDatetime(repoBasicData.lastUpdated || "Unknown")}.`;
+
+  //! Readme text separately
+  const readmeText = repoBasicData.readmeText
+    ? repoBasicData.readmeText.replace(/\s*\n\s*/g, " ").trim()
+    : "No Readme available";
+
+  //! File Tree summery
+  const filterTreeItems = repoBasicData.fileTree.map(
+    (item) => `${item.type === "dir" ? "Directory" : "File"}:${item.name}`
+  );
+
+  const fileTreeText = `Folder Structure : ${
+    filterTreeItems.length > 0
+      ? filterTreeItems.join(", ")
+      : "No files or folders listed"
+  }`;
+
+  //! Open issues summary
+  const openIssuesSummary = repoApiData.openIssues
+    .map(
+      (issue) =>
+        `#${issue.number} [${issue.state}] ${issue.title} (Labels: ${
+          issue.labels.join(", ") || "None"
+        })`
+    )
+    .join(" | ");
+
+  const openIssuesText = `Open Issues: ${
+    openIssuesSummary || "No Open Issues"
+  }.`;
+
+  //! Open prs summary
+  const openPrsSummary = repoApiData.openPullRequests
+    .map(
+      (pr) =>
+        `#${pr.number} [${pr.state}] ${pr.title} (Labels: ${
+          pr.labels.join(", ") || "None"
+        })`
+    )
+    .join(" | ");
+
+  const openPrsText = `Open Pull Requests: ${
+    openPrsSummary || "No Open Pull Requests"
+  }.`;
+
+  //! Releases summary
+  const ReleasesSummary = repoApiData.releases
+    .map(
+      (release) =>
+        `${release.tag_name} - ${release.name} (Published: ${formatDatetime(
+          release.published_at || "Unknown"
+        )}) [url: ${release.url}]`
+    )
+    .join(" | ");
+
+  const releasesSummaryText = `Recent Releases: ${
+    ReleasesSummary || "No releases available"
+  }.`;
+
+  //! Contributors summary
+  const ContributorsSummary = repoApiData.contributors
+    .map(
+      (contributor) =>
+        `${contributor.login} - ${contributor.contributions} contributions`
+    )
+    .join(" | ");
+
+  const contributorsSummaryText = `Top Contributors: ${
+    ContributorsSummary || "No contributors."
+  }.`;
+
+  return [
+    basicInfo,
+    readmeText,
+    fileTreeText,
+    openIssuesText,
+    openPrsText,
+    releasesSummaryText,
+    contributorsSummaryText,
+  ];
 };
+
 const stringifyRepoFile = (file: RepoFileData): string[] => {
   return [""];
 };

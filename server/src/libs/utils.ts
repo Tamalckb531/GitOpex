@@ -10,7 +10,9 @@ export const toPineconeFilter = (
   return pineconeFilter;
 };
 
-export const formatDatetime = (isoString: string) => {
+export const formatDatetime = (isoString: string): string => {
+  if (isoString === "unknown") return "";
+
   const date = new Date(isoString);
 
   const day = date.getUTCDate();
