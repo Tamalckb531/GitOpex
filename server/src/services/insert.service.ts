@@ -209,7 +209,25 @@ const stringifyRepoFile = (file: RepoFileData): string[] => {
   return [fileText];
 };
 const stringifyRepoFolder = (folder: RepoFolderData): string[] => {
-  return [""];
+  const filterTreeItems = folder.fileTree.map(
+    (item) => `${item.type === "dir" ? "Directory" : "File"}:${item.name}`
+  );
+
+  const fileTreeText = `Folder Structure : ${
+    filterTreeItems.length > 0
+      ? filterTreeItems.join(", ")
+      : "No files or folders listed"
+  }`;
+
+  const folderInfoText = `Folder name : ${folder.folderName}, Folder path: ${folder.path}, Also ${fileTreeText}`;
+
+  const folderReadmeText = `Folder ${folder.folderName} Readme text : ${
+    folder.readmeText
+      ? folder.readmeText.replace(/\s*\n\s*/g, " ").trim()
+      : "No Readme available"
+  }`;
+
+  return [folderInfoText, folderReadmeText];
 };
 
 export const handleEnrichedData = async (
