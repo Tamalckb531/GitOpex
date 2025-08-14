@@ -17,7 +17,7 @@ import { Pinecone } from "@pinecone-database/pinecone";
 import { getPrisma } from "../libs/prismaFunc";
 import { createPineconeClient } from "../vector/client";
 
-const storable = async (
+export const storable = async (
   info: string,
   pineconeKey: string
 ): Promise<boolean> => {
@@ -208,6 +208,7 @@ const stringifyRepoFile = (file: RepoFileData): string[] => {
   }, content or code in that file : ${file.content || "No content"}`;
   return [fileText];
 };
+
 const stringifyRepoFolder = (folder: RepoFolderData): string[] => {
   const filterTreeItems = folder.fileTree.map(
     (item) => `${item.type === "dir" ? "Directory" : "File"}:${item.name}`

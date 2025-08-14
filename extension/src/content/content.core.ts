@@ -197,7 +197,7 @@ export const getRepoFolderDataFromDOM = (): RepoFolderData => {
   const readmeDiv = document.querySelector("#readme");
   if (readmeDiv) {
     const contentDiv = readmeDiv.children[1];
-    readmeText = contentDiv.textContent.replace(/\n/g, " ").trim();
+    readmeText = contentDiv.textContent?.replace(/\n/g, " ").trim() || null;
   }
 
   //? File and Folder structure
@@ -270,7 +270,7 @@ export const getRepoFileDataFromDOM = (): RepoFileData => {
   let content: string | null = null;
   const contentElem = document.querySelector("#read-only-cursor-text-area");
   if (contentElem) {
-    content = contentElem.textContent.replace(/\n/g, " ").trim();
+    content = contentElem.textContent?.replace(/\n/g, " ").trim() || null;
   }
 
   const repoFileData: RepoFileData = {

@@ -1,5 +1,9 @@
 import { Context } from "hono";
-import { handleEnrichedData, handleInvoking } from "../services/insert.service";
+import {
+  handleEnrichedData,
+  handleInvoking,
+  storable,
+} from "../services/insert.service";
 import {
   Enriched,
   Query,
@@ -34,14 +38,12 @@ export const insertData = (type: UrlType) => {
 };
 
 export const checker = async (c: Context) => {
-  const enriched: Enriched = await c.req.json();
-  const userId: string | null = c.get("userId");
-  const apiKey: string = c.env.AI_API_KEY;
-  const encryptKey: string = c.env.ENCRYPTION_KEY;
+  const info: string = await c.req.json();
   const pineconeKey: string = c.env.PINECONE_API_KEY;
-  const db_url: string = c.env.DATABASE_URL;
 
-  return c.json({ status: "ok" });
+  const isStorable: boolean = await storable(info, pineconeKey);
+
+  return c.json(isStorable);
 };
 
 export const invokeAgent = async (c: Context) => {

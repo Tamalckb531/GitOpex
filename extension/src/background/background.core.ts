@@ -328,8 +328,8 @@ export const getGitHubPageType = (url: string): UrlType => {
   }
 };
 
-export const isDataExist = async (url: string): Promise<boolean> => {
-  let flag: boolean = false;
+export const isDataStorable = async (url: string): Promise<boolean> => {
+  let flag: boolean = true;
   const info = UrlToInfo(url);
 
   try {
@@ -343,7 +343,7 @@ export const isDataExist = async (url: string): Promise<boolean> => {
     flag = await res.json();
   } catch (err) {
     console.error("Failed to check data exist or not in vector : ", err);
-    return false;
+    return true;
   }
   return flag;
 };
