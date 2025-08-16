@@ -15,6 +15,8 @@ chrome.runtime.onMessage.addListener((message) => {
   switch (message.type) {
     case ChromeTypes.PROFILE:
       const data = getProfileData();
+      console.log("Content -> Scrape Profile data from DOM: ", data);
+
       //? Sending profile data to background.ts
       chrome.runtime.sendMessage({
         type: ChromeTypes.GT_PROF_DATA,
@@ -23,6 +25,8 @@ chrome.runtime.onMessage.addListener((message) => {
       break;
     case ChromeTypes.REPO:
       const repoBasicData = getRepoDataFromDOM();
+
+      console.log("Content -> Scrape Repo data from DOM: ", repoBasicData);
       chrome.runtime.sendMessage({
         type: ChromeTypes.GT_REPO_DATA,
         payload: repoBasicData,
@@ -30,6 +34,10 @@ chrome.runtime.onMessage.addListener((message) => {
       break;
     case ChromeTypes.REPO_FOLDER:
       const repoFolderData = getRepoFolderDataFromDOM();
+      console.log(
+        "Content -> Scrape Repo Folder data from DOM: ",
+        repoFolderData
+      );
       chrome.runtime.sendMessage({
         type: ChromeTypes.GT_REPO_FOLDER_DATA,
         payload: repoFolderData,
@@ -37,6 +45,7 @@ chrome.runtime.onMessage.addListener((message) => {
       break;
     case ChromeTypes.REPO_FILE:
       const repoFileData = getRepoFileDataFromDOM();
+      console.log("Content -> Scrape Repo File data from DOM: ", repoFileData);
       chrome.runtime.sendMessage({
         type: ChromeTypes.GT_REPO_FILE_DATA,
         payload: repoFileData,

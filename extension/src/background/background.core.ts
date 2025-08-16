@@ -97,9 +97,9 @@ export const scrapeGTProfile = async (
       },
       body: JSON.stringify(data),
     });
-    console.log(data);
+    console.log("Background.core -> Send Profile data to backend successfully");
   } catch (err) {
-    console.error("Failed to send data to backend");
+    console.error("Failed to send data to backend. Error: ", err);
   }
 
   return data;
@@ -206,7 +206,7 @@ export const scrapeGTRepo = async (
       },
       body: JSON.stringify(data),
     });
-    console.log("Sent enriched repo data:", data);
+    console.log("Background.core -> Send Repo data to backend successfully");
   } catch (err) {
     console.error("Failed to send repo enriched data to backend", err);
   }
@@ -225,7 +225,9 @@ export const sendRepoFolderData = async (
       },
       body: JSON.stringify(data),
     });
-    console.log("Sent repo folder data:", data);
+    console.log(
+      "Background.core -> Send Repo Folder data to backend successfully"
+    );
   } catch (err) {
     console.error("Failed to send repo folder data to backend", err);
     return false;
@@ -244,7 +246,9 @@ export const sendRepoFileData = async (
       },
       body: JSON.stringify(data),
     });
-    console.log("Sent repo file data : ", data);
+    console.log(
+      "Background.core -> Send Repo File data to backend successfully"
+    );
   } catch (err) {
     console.error("Failed to send repo file data to backend : ", err);
     return false;
@@ -331,6 +335,10 @@ export const getGitHubPageType = (url: string): UrlType => {
 export const isDataStorable = async (url: string): Promise<boolean> => {
   let flag: boolean = true;
   const info = UrlToInfo(url);
+  console.log(
+    "Background.core -> Logging the info for checking data storable or not : ",
+    info
+  );
 
   try {
     const res = await fetch(`${apiBaseUrl}/${ApiEndPoint.CHECK_DATA}`, {

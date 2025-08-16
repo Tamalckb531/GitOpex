@@ -17,6 +17,10 @@ chrome.runtime.onMessage.addListener(async (message, _sender, sendResponse) => {
 
     if (pageType !== "NONE") {
       storable = await isDataStorable(url);
+      console.log(
+        "Background -> is the data storable in the vector database ? Answer: ",
+        storable
+      );
     }
 
     if (!storable) return;
@@ -46,11 +50,21 @@ chrome.runtime.onMessage.addListener(async (message, _sender, sendResponse) => {
   } else if (message.type === ChromeTypes.GT_PROF_DATA) {
     const enriched = await scrapeGTProfile(message.payload);
 
+    console.log(
+      "Background -> Got the entire Profile data from Api and DOM : ",
+      enriched
+    );
+
     sendResponse({ enriched });
 
     return true;
   } else if (message.type === ChromeTypes.GT_PROF_DATA) {
     const repoFullData = await scrapeGTRepo(message.payload);
+
+    console.log(
+      "Background -> Got the entire Repo data from Api and DOM : ",
+      repoFullData
+    );
 
     sendResponse({ repoFullData });
 
