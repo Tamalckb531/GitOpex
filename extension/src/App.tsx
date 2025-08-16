@@ -1,27 +1,12 @@
-import { useEffect } from "react";
 import { useContext } from "react";
 import ChatBoxWrapper from "./components/Wrapper/ChatBoxWrapper";
 import { TabContext } from "./context/TabContext";
 import LoginWrapper from "./components/Wrapper/LoginWrapper";
 import SignupWrapper from "./components/Wrapper/SignupWrapper";
 import SettingsWrapper from "./components/Wrapper/SettingsWrapper";
-import { ChromeTypes, Storage } from "./types/data.type";
-import { isGithubUrl } from "./helpers/func";
+import { Storage } from "./types/data.type";
 
 function App() {
-  useEffect(() => {
-    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-      const url = tabs[0].url || "";
-      if (!isGithubUrl(url)) return;
-
-      chrome.runtime.sendMessage({
-        type: ChromeTypes.INIT,
-        url,
-        tabId: tabs[0].id,
-      });
-    });
-  }, []);
-
   const context = useContext(TabContext);
   if (!context) return null;
 
