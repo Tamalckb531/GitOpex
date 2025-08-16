@@ -23,6 +23,13 @@ export const insertData = (type: UrlType) => {
     const pineconeKey: string = c.env.PINECONE_API_KEY;
     const db_url: string = c.env.DATABASE_URL;
 
+    console.log(
+      "Got the data from extension : ",
+      !!data,
+      " with info : ",
+      data.info
+    );
+
     await handleEnrichedData(
       data,
       type,

@@ -74,30 +74,36 @@ const deleteEmbeddings = async (info: string, pineconeKey: string) => {
 
 const stringifyProfile = (enriched: Enriched): string[] => {
   const { userData, allRepos } = enriched;
+  let profileText: string = "";
+  let repoTexts: string[] = [];
 
-  const profileText = `Name: ${userData.name}, Username: ${
-    userData.username
-  }, Bio: ${userData.bio}, Location: ${userData.location}, Website: ${
-    userData.website
-  }, total repository: ${
-    userData.repoCount
-  }, pinned repository : ${userData.pinnedRepos?.join(", ")}`;
+  try {
+    profileText = `Name: ${userData.name}, Username: ${
+      userData.username
+    }, Bio: ${userData.bio}, Location: ${userData.location}, Website: ${
+      userData.website
+    }, total repository: ${
+      userData.repoCount
+    }, pinned repository : ${userData.pinnedRepos?.join(", ")}`;
 
-  const repoTexts = allRepos.map((repo) => {
-    return `Repository: ${repo.name}, Full name: ${
-      repo.full_name
-    }, Description: ${repo.description},  Size: ${
-      repo.size
-    } Kilobyte, Language: ${repo.language?.join(", ")}, Stars: ${
-      repo.stargazers_count
-    }, Watchers : ${repo.watchers_count}, Total Open issues: ${
-      repo.open_issues_count
-    }, License : ${repo.license?.name}, Total Fork : ${
-      repo.forks
-    }, topics : ${repo.topics?.join(", ")}, Last update : ${formatDatetime(
-      repo.updated_at || " "
-    )}, Link to github : ${repo.html_url}, Tags : ${repo.tag?.join(", ")}`;
-  });
+    repoTexts = allRepos.map((repo) => {
+      return `Repository: ${repo.name}, Full name: ${
+        repo.full_name
+      }, Description: ${repo.description},  Size: ${
+        repo.size
+      } Kilobyte, Language: ${repo.language?.join(", ")}, Stars: ${
+        repo.stargazers_count
+      }, Watchers : ${repo.watchers_count}, Total Open issues: ${
+        repo.open_issues_count
+      }, License : ${repo.license?.name}, Total Fork : ${
+        repo.forks
+      }, topics : ${repo.topics?.join(", ")}, Last update : ${formatDatetime(
+        repo.updated_at || " "
+      )}, Link to github : ${repo.html_url}, Tags : ${repo.tag?.join(", ")}`;
+    });
+  } catch (err: any) {
+    console.log("Error occurred in stringifyProfile: ", err);
+  }
 
   return [profileText, ...repoTexts];
 };
@@ -105,92 +111,98 @@ const stringifyProfile = (enriched: Enriched): string[] => {
 const stringifyRepo = (repo: RepoData): string[] => {
   const { repoBasicData, repoApiData } = repo;
 
-  //! Basic info summery
-  const basicInfo: string = `Repository: ${repoBasicData.owner}/${
-    repoBasicData.repoName
-  }.
+  let basicInfo: string = "";
+  let readmeText: string = "";
+  let fileTreeText: string = "";
+  let openIssuesText: string = "";
+  let openPrsText: string = "";
+  let releasesSummaryText: string = "";
+  let contributorsSummaryText: string = "";
+  try {
+    //! Basic info summery
+    basicInfo = `Repository: ${repoBasicData.owner}/${repoBasicData.repoName}.
 Description: ${repoBasicData.repoDescription || "No description provided."}
 Stars: ${repoBasicData.starsCount}, Forks: ${
-    repoBasicData.forkCount
-  }, Watchers: ${repoBasicData.watchersCount}.
+      repoBasicData.forkCount
+    }, Watchers: ${repoBasicData.watchersCount}.
 License: ${repoBasicData.license || "No license specified"}.
 Default branch: ${repoBasicData.defaultBranch},
 Open issues: ${repoBasicData.openIssuesCount}, Open pull requests: ${
-    repoBasicData.openPullReqCount
-  }.
+      repoBasicData.openPullReqCount
+    }.
 Topics: ${repoBasicData.topics.join(", ") || "None"}.
 Last updated: ${formatDatetime(repoBasicData.lastUpdated || "Unknown")}.`;
 
-  //! Readme text separately
-  const readmeText = repoBasicData.readmeText
-    ? repoBasicData.readmeText.replace(/\s*\n\s*/g, " ").trim()
-    : "No Readme available";
+    //! Readme text separately
+    readmeText = repoBasicData.readmeText
+      ? repoBasicData.readmeText.replace(/\s*\n\s*/g, " ").trim()
+      : "No Readme available";
 
-  //! File Tree summery
-  const filterTreeItems = repoBasicData.fileTree.map(
-    (item) => `${item.type === "dir" ? "Directory" : "File"}:${item.name}`
-  );
+    //! File Tree summery
+    const filterTreeItems = repoBasicData.fileTree.map(
+      (item) => `${item.type === "dir" ? "Directory" : "File"}:${item.name}`
+    );
 
-  const fileTreeText = `Folder Structure : ${
-    filterTreeItems.length > 0
-      ? filterTreeItems.join(", ")
-      : "No files or folders listed"
-  }`;
+    fileTreeText = `Folder Structure : ${
+      filterTreeItems.length > 0
+        ? filterTreeItems.join(", ")
+        : "No files or folders listed"
+    }`;
 
-  //! Open issues summary
-  const openIssuesSummary = repoApiData.openIssues
-    .map(
-      (issue) =>
-        `#${issue.number} [${issue.state}] ${issue.title} (Labels: ${
-          issue.labels.join(", ") || "None"
-        })`
-    )
-    .join(" | ");
+    //! Open issues summary
+    const openIssuesSummary = repoApiData.openIssues
+      .map(
+        (issue) =>
+          `#${issue.number} [${issue.state}] ${issue.title} (Labels: ${
+            issue.labels.join(", ") || "None"
+          })`
+      )
+      .join(" | ");
 
-  const openIssuesText = `Open Issues: ${
-    openIssuesSummary || "No Open Issues"
-  }.`;
+    openIssuesText = `Open Issues: ${openIssuesSummary || "No Open Issues"}.`;
 
-  //! Open prs summary
-  const openPrsSummary = repoApiData.openPullRequests
-    .map(
-      (pr) =>
-        `#${pr.number} [${pr.state}] ${pr.title} (Labels: ${
-          pr.labels.join(", ") || "None"
-        })`
-    )
-    .join(" | ");
+    //! Open prs summary
+    const openPrsSummary = repoApiData.openPullRequests
+      .map(
+        (pr) =>
+          `#${pr.number} [${pr.state}] ${pr.title} (Labels: ${
+            pr.labels.join(", ") || "None"
+          })`
+      )
+      .join(" | ");
 
-  const openPrsText = `Open Pull Requests: ${
-    openPrsSummary || "No Open Pull Requests"
-  }.`;
+    openPrsText = `Open Pull Requests: ${
+      openPrsSummary || "No Open Pull Requests"
+    }.`;
 
-  //! Releases summary
-  const ReleasesSummary = repoApiData.releases
-    .map(
-      (release) =>
-        `${release.tag_name} - ${release.name} (Published: ${formatDatetime(
-          release.published_at || "Unknown"
-        )}) [url: ${release.url}]`
-    )
-    .join(" | ");
+    //! Releases summary
+    const ReleasesSummary = repoApiData.releases
+      .map(
+        (release) =>
+          `${release.tag_name} - ${release.name} (Published: ${formatDatetime(
+            release.published_at || "Unknown"
+          )}) [url: ${release.url}]`
+      )
+      .join(" | ");
 
-  const releasesSummaryText = `Recent Releases: ${
-    ReleasesSummary || "No releases available"
-  }.`;
+    releasesSummaryText = `Recent Releases: ${
+      ReleasesSummary || "No releases available"
+    }.`;
 
-  //! Contributors summary
-  const ContributorsSummary = repoApiData.contributors
-    .map(
-      (contributor) =>
-        `${contributor.login} - ${contributor.contributions} contributions`
-    )
-    .join(" | ");
+    //! Contributors summary
+    const ContributorsSummary = repoApiData.contributors
+      .map(
+        (contributor) =>
+          `${contributor.login} - ${contributor.contributions} contributions`
+      )
+      .join(" | ");
 
-  const contributorsSummaryText = `Top Contributors: ${
-    ContributorsSummary || "No contributors."
-  }.`;
-
+    contributorsSummaryText = `Top Contributors: ${
+      ContributorsSummary || "No contributors."
+    }.`;
+  } catch (err: any) {
+    console.log("Error occurred in stringifyRepo: ", err);
+  }
   return [
     basicInfo,
     readmeText,
@@ -203,31 +215,41 @@ Last updated: ${formatDatetime(repoBasicData.lastUpdated || "Unknown")}.`;
 };
 
 const stringifyRepoFile = (file: RepoFileData): string[] => {
-  const fileText = `File Name : ${file.fileName}, located at : ${
-    file.path
-  }, content or code in that file : ${file.content || "No content"}`;
+  let fileText: string = "";
+  try {
+    fileText = `File Name : ${file.fileName}, located at : ${
+      file.path
+    }, content or code in that file : ${file.content || "No content"}`;
+  } catch (err: any) {
+    console.log("Error occurred in stringifyRepoFile: ", err);
+  }
   return [fileText];
 };
 
 const stringifyRepoFolder = (folder: RepoFolderData): string[] => {
-  const filterTreeItems = folder.fileTree.map(
-    (item) => `${item.type === "dir" ? "Directory" : "File"}:${item.name}`
-  );
+  let folderInfoText: string = "";
+  let folderReadmeText: string = "";
+  try {
+    const filterTreeItems = folder.fileTree.map(
+      (item) => `${item.type === "dir" ? "Directory" : "File"}:${item.name}`
+    );
 
-  const fileTreeText = `Folder Structure : ${
-    filterTreeItems.length > 0
-      ? filterTreeItems.join(", ")
-      : "No files or folders listed"
-  }`;
+    const fileTreeText = `Folder Structure : ${
+      filterTreeItems.length > 0
+        ? filterTreeItems.join(", ")
+        : "No files or folders listed"
+    }`;
 
-  const folderInfoText = `Folder name : ${folder.folderName}, Folder path: ${folder.path}, Also ${fileTreeText}`;
+    folderInfoText = `Folder name : ${folder.folderName}, Folder path: ${folder.path}, Also ${fileTreeText}`;
 
-  const folderReadmeText = `Folder ${folder.folderName} Readme text : ${
-    folder.readmeText
-      ? folder.readmeText.replace(/\s*\n\s*/g, " ").trim()
-      : "No Readme available"
-  }`;
-
+    folderReadmeText = `Folder ${folder.folderName} Readme text : ${
+      folder.readmeText
+        ? folder.readmeText.replace(/\s*\n\s*/g, " ").trim()
+        : "No Readme available"
+    }`;
+  } catch (err: any) {
+    console.log("Error occurred in stringifyRepoFolder: ", err);
+  }
   return [folderInfoText, folderReadmeText];
 };
 
@@ -263,6 +285,8 @@ export const handleEnrichedData = async (
         throw new Error("Unsupported Url");
     }
 
+    console.log("Data is storable and got the docs : ", docs);
+
     let apiKey: string = key;
     if (userId) {
       const user = await prisma.user.findUnique({
@@ -277,6 +301,7 @@ export const handleEnrichedData = async (
     }
 
     await storeEmbeddings(docs, apiKey, data.info, pineconeKey);
+    console.log("Vector data saved in pinecone");
   } catch (e: any) {
     throw new HTTPException(500, {
       message: e.message || "Error occurred while getting the apiKey of user",
