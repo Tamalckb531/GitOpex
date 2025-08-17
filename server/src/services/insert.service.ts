@@ -348,5 +348,3 @@ export const handleInvoking = async (
   });
   return output.generation;
 };
-
-//? inspect
