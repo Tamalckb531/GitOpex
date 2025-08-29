@@ -8,11 +8,15 @@ import {
   sendRepoFolderData,
 } from "./background.core";
 
+console.log("Background started");
+
 chrome.runtime.onMessage.addListener(async (message, _sender, sendResponse) => {
   if (message.type === ChromeTypes.INIT) {
     const { url, tabId } = message;
 
     const pageType = getGitHubPageType(url);
+    console.log("Getting page type from the init background end : ", pageType);
+
     let storable: boolean = false;
 
     if (pageType !== "NONE") {

@@ -12,6 +12,12 @@ const ChatBox = () => {
       const url = tabs[0].url || "";
       if (!isGithubUrl(url)) return;
 
+      console.log(
+        "The useEffect run successfully with the url : ",
+        url,
+        " now it gonna book registry to background"
+      );
+
       chrome.runtime.sendMessage({
         type: ChromeTypes.INIT,
         url,

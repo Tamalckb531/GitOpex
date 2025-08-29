@@ -18,7 +18,7 @@ import { getPrisma } from "../libs/prismaFunc";
 import { createPineconeClient } from "../vector/client";
 
 export const storable = async (
-  info: string,
+  userInfo: string,
   pineconeKey: string
 ): Promise<boolean> => {
   const indexName = Constants.GITOPEX_INDEX;
@@ -26,18 +26,18 @@ export const storable = async (
   const { index } = createPineconeClient(pineconeKey, indexName);
 
   let queryResult;
+  console.log("Data running for : ", userInfo);
+
   try {
     queryResult = await index.query({
       topK: 1,
       vector: Array(768).fill(0),
-      filter: {
-        info: { $eq: info },
-      },
+      filter: { info: userInfo },
       includeMetadata: true,
     });
   } catch (error: any) {
     throw new HTTPException(500, {
-      message: error.message || "Error occurred while deleting embeddings",
+      message: error.message || "Error occurred while query embeddings",
     });
   }
 
@@ -49,7 +49,7 @@ export const storable = async (
   if (isNaN(storeDate.getTime())) return true;
   const oneWeekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
 
-  if (storeDate < oneWeekAgo) await deleteEmbeddings(info, pineconeKey);
+  if (storeDate < oneWeekAgo) await deleteEmbeddings(userInfo, pineconeKey);
 
   return storeDate < oneWeekAgo;
 };
